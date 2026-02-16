@@ -34,21 +34,20 @@ current_input = ""
 @snowman_parts = []
 
 
-# Title
+# Title (centered - window is 800px wide, text is ~280px, so (800-280)/2 = 260)
 title = Text.new(
- 'SNOWMAN GAME',
- x: 300, y: 20,
- size: 40,
- color: 'white'
+  'SNOWMAN GAME',
+  x: 260, y: 20,
+  size: 40,
+  color: 'white'
 )
 
-
-# Instructions
+# Instructions (centered)
 instructions = Text.new(
- 'Type a letter and press ENTER',
- x: 250, y: 70,
- size: 20,
- color: 'aqua'
+  'Type a letter and press ENTER',
+  x: 220, y: 70,
+  size: 20,
+  color: 'aqua'
 )
 
 
