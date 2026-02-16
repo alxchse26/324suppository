@@ -34,15 +34,15 @@ words = File.readlines("words.txt", chomp: true)
 # Title
 title = Text.new(
   @secret_word,
-  x: 300, y: 20,
+  x: 260, y: 20,
   size: 40,
   color: 'white'
 )
 
 # Instructions
 instructions = Text.new(
-  'Type a letter and press ENTER',
-  x: 250, y: 70,
+  'Type a letter and press ENTER to submit your guess!',
+  x: 165, y: 70,
   size: 20,
   color: 'aqua'
 )
