@@ -41,8 +41,8 @@ title = Text.new(
 
 # Instructions
 instructions = Text.new(
-  'Type a letter and press ENTER',
-  x: 220, y: 70,
+  'Type a letter and press ENTER to submit your guess!',
+  x: 165, y: 70,
   size: 20,
   color: 'aqua'
 )
@@ -57,7 +57,7 @@ instructions = Text.new(
 
 # Wrong guesses display
 @wrong_display = Text.new(
-  "Wrong: #{@wrong_guesses.join(', ')}",
+  "All Guesses: #{@wrong_guesses.join(', ')}",
   x: 50, y: 550,
   size: 20,
   color: 'red'
