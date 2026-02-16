@@ -34,15 +34,15 @@ words = File.readlines("words.txt", chomp: true)
 # Title
 title = Text.new(
   @secret_word,
-  x: 260, y: 20,
+  x: 300, y: 20,
   size: 40,
   color: 'white'
 )
 
 # Instructions
 instructions = Text.new(
-  'Type a letter and press ENTER to submit your guess!',
-  x: 165, y: 70,
+  'Type a letter and press ENTER',
+  x: 250, y: 70,
   size: 20,
   color: 'aqua'
 )
@@ -57,7 +57,7 @@ instructions = Text.new(
 
 # Wrong guesses display
 @wrong_display = Text.new(
-  "All Guesses: #{@wrong_guesses.join(', ')}",
+  "Wrong: #{@wrong_guesses.join(', ')}",
   x: 50, y: 550,
   size: 20,
   color: 'red'
@@ -129,8 +129,8 @@ def draw_snowman(wrong_count)
   
   if wrong_count >= 6
     # Arms (using rectangles as lines)
-    @snowman_parts << Rectangle.new(x: 340, y: 310, width: 50, height: 4, color: 'brown')
-    @snowman_parts << Rectangle.new(x: 410, y: 310, width: 50, height: 4, color: 'brown')
+    @snowman_parts << Line.new(x1: 300, y1: 270, x2: 350, y2: 310, width: 4, color: 'brown')
+    @snowman_parts << Line.new(x1: 450, y1: 310, x2: 500, y2: 270, width: 4, color: 'brown')
     
     # Replace eyes with X's (dead)
     @snowman_parts.delete_if { |part| part.is_a?(Circle) && part.radius == 5 }
@@ -234,7 +234,6 @@ on :key_down do |event|
             @won = true
             
             # Show victory overlay
-            @victory_overlay.add
             @victory_text.text = "YOU WON! 🎉"
             @victory_text.color = 'white'
             @victory_text.add
@@ -258,7 +257,6 @@ on :key_down do |event|
             @game_over = true
             
             # Show game over overlay
-            @victory_overlay.add
             @victory_text.text = "GAME OVER!"
             @victory_text.color = 'red'
             @victory_text.add
