@@ -2,7 +2,7 @@
 # bmthom26@g.holycross.edu
 # jrkosl26@g.holycross.du
 # amchas26@g.holycross.edu
-# 04 February 2026
+# Last Modified: 16 February 2026
 # CSCI 324 - Programming Languages
 # Snowman Variation of Hangman
 
@@ -13,7 +13,6 @@ words = File.readlines("words.txt", chomp: true) # reads the file and removes ne
 # After selecting secret_word
 secret_word = words.sample.downcase # Sample - picks a random word from the array
 display = Array.new(secret_word.length, "_")
-
 
 # Arrays for guessed letters and wrong guesses
 guessed_letters = []
@@ -125,13 +124,17 @@ puts display.join(" ")  # Shows: _ _ _ _ _
 loop do
   puts "\nGuess a letter:"
   guess = STDIN.gets.chomp.downcase  # get user input and convert to lowercase
- 
-  # Check if it's a single letter and not a symbol
-  if guess.length != 1 || !guess.match?(/[a-z]/)
-   puts "Please enter a single letter!"
-   next
-  end
 
+ # Check if it's a single letter (allow quotes and hyphens as valid but don't process them)
+  if guess.length != 1 || !guess.match?(/[a-z]/)
+    if guess == "'" || guess == "-"  # Excepted punctuation 
+      puts "That's already shown in the word!"
+    else
+      puts "Please enter a single letter!"
+    end
+    next
+  end
+ 
 
 
 
@@ -161,7 +164,7 @@ if secret_word.include?(guess)
 else
   wrong_guesses << guess  # Add THIS first
   puts "Wrong guess! (#{wrong_guesses.length}/#{max_wrong})"
-  draw_snowman(wrong_guesses.length)  # Then draw (and use .length here!)
+  draw_snowman(wrong_guesses.length)  # Then draw 
  
   # Check if they lost
   if wrong_guesses.length >= max_wrong  # Add .length here too!
@@ -173,8 +176,17 @@ end
 
 
 puts display.join(" ")
-puts "Wrong guesses: #{wrong_guesses.join(", ")}" if wrong_guesses.any?
- 
+  
+  # Display all guesses alphabetically
+  if guessed_letters.any?
+    puts "All guesses: #{guessed_letters.sort.join(", ")}"  # <- .sort does the alphabetizing
+  end
+  
+  # Display wrong guesses separately
+  if wrong_guesses.any?
+    puts "Wrong guesses: #{wrong_guesses.join(", ")}"
+  end
+  
   # Check if they won
   if display.join == secret_word
     puts "You won!"
