@@ -31,18 +31,21 @@ words = File.readlines("words.txt", chomp: true)
 # Track snowman parts so we can remove them
 @snowman_parts = []
 
+# ADDED: Track guessed letters display
+@guessed_display_container = []
+
 # Title
 title = Text.new(
-  @secret_word,
-  x: 260, y: 20,
+  "SNOWMAN GAME",
+  x: 300, y: 20,
   size: 40,
   color: 'white'
 )
 
 # Instructions
 instructions = Text.new(
-  'Type a letter and press ENTER to submit your guess!',
-  x: 165, y: 70,
+  'Type a letter and press ENTER',
+  x: 250, y: 70,
   size: 20,
   color: 'aqua'
 )
@@ -55,13 +58,52 @@ instructions = Text.new(
   color: 'white'
 )
 
-# Wrong guesses display
-@wrong_display = Text.new(
-  "Wrong: #{@wrong_guesses.join(', ')}",
-  x: 50, y: 550,
-  size: 20,
-  color: 'red'
-)
+# ADDED: Function to update guessed letters display
+def update_guessed_display
+  # Remove old display
+  @guessed_display_container.each(&:remove)
+  @guessed_display_container.clear
+  
+  return if @guessed_letters.empty?
+  
+  # Sort letters alphabetically
+  sorted_letters = @guessed_letters.sort
+  
+  # Starting position
+  x_pos = 50
+  y_pos = 550
+  
+  sorted_letters.each_with_index do |letter, index|
+    # Determine color: green if correct, red if wrong
+    color = @secret_word.include?(letter) ? 'lime' : 'red'
+    
+    # Create text for the letter (uppercase)
+    letter_text = Text.new(
+      letter.upcase,
+      x: x_pos,
+      y: y_pos,
+      size: 20,
+      color: color
+    )
+    @guessed_display_container << letter_text
+    
+    # Move x position for next letter
+    x_pos += 20
+    
+    # Add comma separator (white) if not the last letter
+    if index < sorted_letters.length - 1
+      comma = Text.new(
+        ',',
+        x: x_pos,
+        y: y_pos,
+        size: 20,
+        color: 'white'
+      )
+      @guessed_display_container << comma
+      x_pos += 15
+    end
+  end
+end
 
 # Victory/Game Over screen elements (hidden initially)
 @victory_overlay = Rectangle.new(
@@ -74,18 +116,18 @@ instructions = Text.new(
 
 @victory_text = Text.new(
   '',
-  x: 200, y: 250,
+  x: 235, y: 250,
   size: 60,
-  color: 'white',
+  color: 'yellow',
   z: 11
 )
 @victory_text.remove
 
 @play_again_text = Text.new(
   'Press SPACE to play again or ESC to quit',
-  x: 180, y: 350,
+  x: 200, y: 350,
   size: 20,
-  color: 'white',
+  color: 'yellow',
   z: 11
 )
 @play_again_text.remove
@@ -176,6 +218,7 @@ end
 
 # Initial snowman (empty)
 draw_snowman(0)
+update_guessed_display  # ADDED: Initialize the display
 
 # Handle keyboard input
 on :key_down do |event|
@@ -191,7 +234,7 @@ on :key_down do |event|
     
     # Reset displays
     @word_display.text = @display.join(" ")
-    @wrong_display.text = "Wrong: "
+    update_guessed_display  # ADDED: Reset guessed letters display
     @message.text = ''
     @current_input = ""
     @input_display.text = "Input: "
@@ -226,6 +269,7 @@ on :key_down do |event|
             @display[index] = guess if letter == guess
           end
           @word_display.text = @display.join(" ")
+          update_guessed_display  # ADDED: Update guessed letters display
           
           # Check win
           if @display.join == @secret_word
@@ -234,20 +278,20 @@ on :key_down do |event|
             @won = true
             
             # Show victory overlay
-            @victory_text.text = "YOU WON! 🎉"
-            @victory_text.color = 'white'
+            @victory_text.text = "YOU WON!"
+            @victory_text.color = 'yellow'
             @victory_text.add
             @play_again_text.add
             
             @message.text = "The word was: #{@secret_word}"
-            @message.color = 'white'
+            @message.color = 'yellow'
           end
         else
           @wrong_guesses << guess
           @guessed_letters << guess
           @message.text = "Wrong! (#{@wrong_guesses.length}/#{@max_wrong})"
           @message.color = 'red'
-          @wrong_display.text = "Wrong: #{@wrong_guesses.join(', ')}"
+          update_guessed_display  # ADDED: Update guessed letters display
           
           draw_snowman(@wrong_guesses.length)
           
@@ -279,6 +323,10 @@ on :key_down do |event|
     
     @input_display.text = "Input: #{@current_input}"
   end
+end
+
+# Show the window
+show
 end
 
 # Show the window
