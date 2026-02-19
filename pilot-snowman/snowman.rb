@@ -2,7 +2,7 @@
 # bmthom26@g.holycross.edu
 # jrkosl26@g.holycross.du
 # amchas26@g.holycross.edu
-# Last Modified: 16 February 2026
+# Last Modified: 19 February 2026
 # CSCI 324 - Programming Languages
 # Snowman Variation of Hangman
 
