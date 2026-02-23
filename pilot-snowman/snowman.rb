@@ -37,7 +37,7 @@ words = File.readlines("words.txt", chomp: true)
 # Title
 title = Text.new(
   "SNOWMAN GAME",
-  x: 300, y: 20,
+  x: 227, y: 20,
   size: 40,
   color: 'white'
 )
