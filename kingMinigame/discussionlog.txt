@@ -1,6 +1,9 @@
 Joseph Koslosky, Bridget Thomson, Alex Chase
 
-03/011
+03/11
 
 Today we met to discuss the logistics of our project. We got the idea cleared by Prof. King a few days ago and are ready to begin working. In this meeting, we decided what we would like to achieve for our check-in two Mondays from now. 
 We decided that a reasonable expectation is to assign each person one minigame to work on in the meantime. We will also create the start and endpoint screens that are displayed as well. 
+
+03/17
+
