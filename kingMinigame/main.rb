@@ -1,0 +1,182 @@
+# Bridget Thomson, Joe Koslosky, Alex Chase
+# emails: bmthom26@g.holycross.edu, , amchas26@g.holycross.edu
+# CSCI 324 -- Programming Languages
+# 21 April 2026
+# Term Final Project
+# Last Modified: 3/17/26
+
+
+# main.rb
+# Entry point and state machine for the Mini Games collection.
+#
+# Game states:
+#   :start       — title screen, waiting for ENTER
+#   :transition  — 3-second countdown between minigames
+#   :playing     — a minigame is active
+#   :success     — player cleared all 5 levels
+#   :failure     — player ran out of lives
+#
+# Flow:
+#   :start → :transition → :playing → (win) → :transition → :playing → ...
+#                                   → (fail, lives > 0) → :transition → next
+#                                   → (fail, lives == 0) → :failure
+
+require 'ruby2d'
+require 'set'
+
+# ── Load all game files ───────────────────────────────────────────────────────
+require_relative 'game_state'
+require_relative 'ui/hearts'
+require_relative 'screens/start_screen'
+require_relative 'screens/transition_screen'
+require_relative 'screens/success_screen'
+require_relative 'screens/failure_screen'
+require_relative 'minigames/base_minigame'
+require_relative 'minigames/seat_scramble'
+require_relative 'minigames/snowman'
+
+# ── Window ────────────────────────────────────────────────────────────────────
+set title:      'Mini Games'
+set width:      800
+set height:     600
+set background: 'black'
+set fps_cap:    60
+
+# ── Shared state & screen references ─────────────────────────────────────────
+$gs              = GameState.new    # game state (lives, level, minigame index)
+$current_screen  = nil              # active screen object  (start/transition/success/failure)
+$current_game    = nil              # active BaseMinigame subclass instance
+$hearts          = nil              # HUD hearts widget
+$last_time       = Time.now.to_f    # for manual delta-time calculation
+
+# ── State machine helpers ─────────────────────────────────────────────────────
+
+def enter_start
+  $gs.state       = :start
+  $current_screen = StartScreen.new
+end
+
+def enter_transition
+  $gs.state = :transition
+  $current_screen = TransitionScreen.new(
+    $gs.minigame_name,
+    $gs.level,
+    $gs.minigame_index + 1,
+    GameState::MINIGAME_CLASSES.length
+  )
+end
+
+def enter_playing
+  $gs.state      = :playing
+  $current_screen = nil
+  $current_game  = $gs.current_minigame_class.new($gs.level)
+  $current_game.start
+end
+
+def enter_success
+  $gs.state       = :success
+  $current_game   = nil
+  $current_screen = SuccessScreen.new
+end
+
+def enter_failure
+  $gs.state       = :failure
+  $current_game   = nil
+  $current_screen = FailureScreen.new
+end
+
+# Called when a minigame finishes (win or lose).
+# Handles life deduction, advancement, and next-state routing.
+def handle_minigame_end(won:)
+  $current_game.cleanup
+  $current_game = nil
+
+  unless won
+    $gs.lose_life!
+    $hearts.update($gs.lives_remaining)
+    unless $gs.alive?
+      enter_failure
+      return
+    end
+  end
+
+  result = $gs.advance_minigame!
+
+  case result
+  when :game_won  then enter_success
+  when :level_up  then enter_transition   # new level, same first minigame
+  when :next_game then enter_transition   # next minigame in same level
+  end
+end
+
+# ── Boot ─────────────────────────────────────────────────────────────────────
+enter_start
+
+# ── Update loop (called every frame by Ruby2D) ────────────────────────────────
+update do
+  now = Time.now.to_f
+  dt  = (now - $last_time).clamp(0.0, 0.1)   # cap dt to 100ms to survive window focus loss
+  $last_time = now
+
+  case $gs.state
+
+  when :transition
+    result = $current_screen.update(dt)
+    if result == :done
+      $current_screen.cleanup
+      $current_screen = nil
+
+      # Lazy-create hearts when gameplay first begins
+      $hearts ||= Hearts.new($gs.lives_remaining)
+
+      enter_playing
+    end
+
+  when :playing
+    $current_game.update(dt)
+
+    if $current_game.completed
+      handle_minigame_end(won: true)
+    elsif $current_game.failed
+      handle_minigame_end(won: false)
+    end
+
+  end
+end
+
+# ── Input routing ─────────────────────────────────────────────────────────────
+on :key_down do |event|
+  case $gs.state
+
+  when :start
+    result = $current_screen.handle_input(event)
+    if result == :start_game
+      $current_screen.cleanup
+      $current_screen = nil
+      $gs.reset!
+      enter_transition
+    end
+
+  when :playing
+    $current_game.handle_input(event)
+
+  when :success, :failure
+    result = $current_screen.handle_input(event)
+    if result == :restart
+      $current_screen.cleanup
+      $current_screen = nil
+      $hearts&.remove
+      $hearts = nil
+      $gs.reset!
+      enter_start
+    end
+
+  end
+end
+
+on :mouse_down do |event|
+  $current_game.handle_input(event) if $gs.state == :playing && $current_game
+end
+
+# ── Show ──────────────────────────────────────────────────────────────────────
+show
