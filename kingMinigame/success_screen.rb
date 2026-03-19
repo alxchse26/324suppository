@@ -8,7 +8,6 @@ class SuccessScreen
   end
 
   def handle_input(event)
-    return unless event.is_a?(Ruby2D::KeyEvent)
     return :restart if event.key == 'return' || event.key == 'enter'
     nil
   end

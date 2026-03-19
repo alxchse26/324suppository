@@ -1,11 +1,3 @@
-# Bridget Thomson, Joe Koslosky, Alex Chase
-# emails: bmthom26@g.holycross.edu, , amchas26@g.holycross.edu
-# CSCI 324 -- Programming Languages
-# 21 April 2026
-# Term Final Project
-# Last Modified: 3/17/26
-
-
 # main.rb
 # Entry point and state machine for the Mini Games collection.
 #
@@ -25,15 +17,16 @@ require 'ruby2d'
 require 'set'
 
 # ── Load all game files ───────────────────────────────────────────────────────
+# require_relative resolves from the location of THIS file, not the shell cwd
 require_relative 'game_state'
-require_relative 'ui/hearts'
-require_relative 'screens/start_screen'
-require_relative 'screens/transition_screen'
-require_relative 'screens/success_screen'
-require_relative 'screens/failure_screen'
-require_relative 'minigames/base_minigame'
-require_relative 'minigames/seat_scramble'
-require_relative 'minigames/snowman'
+require_relative 'hearts'
+require_relative 'start_screen'
+require_relative 'transition_screen'
+require_relative 'success_screen'
+require_relative 'failure_screen'
+require_relative 'base_minigame'
+require_relative 'seat_scramble'
+require_relative 'snowman'
 
 # ── Window ────────────────────────────────────────────────────────────────────
 set title:      'Mini Games'
@@ -67,9 +60,9 @@ def enter_transition
 end
 
 def enter_playing
-  $gs.state      = :playing
+  $gs.state       = :playing
   $current_screen = nil
-  $current_game  = $gs.current_minigame_class.new($gs.level)
+  $current_game   = $gs.current_minigame_class.new($gs.level)
   $current_game.start
 end
 
@@ -104,8 +97,8 @@ def handle_minigame_end(won:)
 
   case result
   when :game_won  then enter_success
-  when :level_up  then enter_transition   # new level, same first minigame
-  when :next_game then enter_transition   # next minigame in same level
+  when :level_up  then enter_transition
+  when :next_game then enter_transition
   end
 end
 
@@ -115,7 +108,7 @@ enter_start
 # ── Update loop (called every frame by Ruby2D) ────────────────────────────────
 update do
   now = Time.now.to_f
-  dt  = (now - $last_time).clamp(0.0, 0.1)   # cap dt to 100ms to survive window focus loss
+  dt  = (now - $last_time).clamp(0.0, 0.1)
   $last_time = now
 
   case $gs.state
@@ -125,10 +118,7 @@ update do
     if result == :done
       $current_screen.cleanup
       $current_screen = nil
-
-      # Lazy-create hearts when gameplay first begins
       $hearts ||= Hearts.new($gs.lives_remaining)
-
       enter_playing
     end
 

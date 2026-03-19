@@ -161,7 +161,7 @@ class SeatScramble < BaseMinigame
 
   def handle_input(event)
     return unless active?
-    return unless event.is_a?(Ruby2D::MouseEvent) && event.type == :down && event.button == :left
+    return unless event.respond_to?(:button) && event.button == :left
 
     clicked = @seats.find { |s| s.contains?(event.x, event.y) }
     return unless clicked

@@ -10,7 +10,6 @@ class StartScreen
   end
 
   def handle_input(event)
-    return unless event.is_a?(Ruby2D::KeyEvent)
     if event.key == 'return' || event.key == 'enter'
       return :start_game
     end
