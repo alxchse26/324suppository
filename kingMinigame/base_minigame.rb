@@ -13,20 +13,22 @@ class BaseMinigame
     @objects   = []   # all Ruby2D objects — subclasses push into this for easy cleanup
   end
 
-  # Called once when the minigame becomes active
-  def start
-    raise NotImplementedError, "#{self.class} must implement #start"
-  end
-
-  # Called every frame by the Ruby2D update block. dt = seconds since last frame.
-  def update(dt)
-    raise NotImplementedError, "#{self.class} must implement #update"
-  end
-
-  # Called for every Ruby2D input event while this minigame is active
-  def handle_input(event)
-    raise NotImplementedError, "#{self.class} must implement #handle_input"
-  end
+ # Called once when the minigame becomes active
+def start
+  raise NotImplementedError, "#{self.class} must implement #start"
+end
+# Called every frame by the Ruby2D update block. dt = seconds since last frame.
+def update(dt)
+  raise NotImplementedError, "#{self.class} must implement #update"
+end
+# Called for every Ruby2D input event while this minigame is active
+def handle_input(event)
+  raise NotImplementedError, "#{self.class} must implement #handle_input"
+end
+# Called when transitioning away — must remove every Ruby2D object created
+def cleanup
+  raise NotImplementedError, "#{self.class} must implement #cleanup"
+end
 
   # Called when transitioning away — must remove every Ruby2D object created
   def cleanup

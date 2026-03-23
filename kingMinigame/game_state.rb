@@ -12,8 +12,10 @@ class GameState
   MINIGAME_CLASSES = [
     # SeatScramble is required below in main.rb after all files are loaded
     # so we reference them by name (symbol resolved at runtime via const_get)
+    :RockClimb,
     :SeatScramble,
     :Snowman,
+  
   ].freeze
 
   attr_accessor :lives, :level, :minigame_index, :state, :pending_message

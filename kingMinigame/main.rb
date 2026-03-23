@@ -17,7 +17,6 @@ require 'ruby2d'
 require 'set'
 
 # ── Load all game files ───────────────────────────────────────────────────────
-# require_relative resolves from the location of THIS file, not the shell cwd
 require_relative 'game_state'
 require_relative 'hearts'
 require_relative 'start_screen'
@@ -26,7 +25,8 @@ require_relative 'success_screen'
 require_relative 'failure_screen'
 require_relative 'base_minigame'
 require_relative 'seat_scramble'
-require_relative 'snowman'
+#require_relative 'snowman'
+require_relative 'rock_climb'
 
 # ── Window ────────────────────────────────────────────────────────────────────
 set title:      'Mini Games'
@@ -36,11 +36,16 @@ set background: 'black'
 set fps_cap:    60
 
 # ── Shared state & screen references ─────────────────────────────────────────
-$gs              = GameState.new    # game state (lives, level, minigame index)
-$current_screen  = nil              # active screen object  (start/transition/success/failure)
-$current_game    = nil              # active BaseMinigame subclass instance
-$hearts          = nil              # HUD hearts widget
-$last_time       = Time.now.to_f    # for manual delta-time calculation
+$gs             = GameState.new
+$current_screen = nil
+$current_game   = nil
+$hearts         = nil
+$last_time      = Time.now.to_f
+
+# Global hash tracking which keys are currently held down.
+# Populated by on :key_down, cleared by on :key_up.
+# rock_climb.rb reads this every frame inside update to move the player.
+$keys_held = {}
 
 # ── State machine helpers ─────────────────────────────────────────────────────
 
@@ -50,7 +55,7 @@ def enter_start
 end
 
 def enter_transition
-  $gs.state = :transition
+  $gs.state       = :transition
   $current_screen = TransitionScreen.new(
     $gs.minigame_name,
     $gs.level,
@@ -60,9 +65,9 @@ def enter_transition
 end
 
 def enter_playing
-  $gs.state       = :playing
+  $gs.state     = :playing
   $current_screen = nil
-  $current_game   = $gs.current_minigame_class.new($gs.level)
+  $current_game = $gs.current_minigame_class.new($gs.level)
   $current_game.start
 end
 
@@ -78,8 +83,6 @@ def enter_failure
   $current_screen = FailureScreen.new
 end
 
-# Called when a minigame finishes (win or lose).
-# Handles life deduction, advancement, and next-state routing.
 def handle_minigame_end(won:)
   $current_game.cleanup
   $current_game = nil
@@ -105,7 +108,7 @@ end
 # ── Boot ─────────────────────────────────────────────────────────────────────
 enter_start
 
-# ── Update loop (called every frame by Ruby2D) ────────────────────────────────
+# ── Update loop ───────────────────────────────────────────────────────────────
 update do
   now = Time.now.to_f
   dt  = (now - $last_time).clamp(0.0, 0.1)
@@ -136,6 +139,8 @@ end
 
 # ── Input routing ─────────────────────────────────────────────────────────────
 on :key_down do |event|
+  $keys_held[event.key] = true   # track held keys for rock_climb movement polling
+
   case $gs.state
 
   when :start
@@ -162,6 +167,11 @@ on :key_down do |event|
     end
 
   end
+end
+
+on :key_up do |event|
+  $keys_held.delete(event.key)   # clear held key so movement stops
+  $current_game.handle_input(event) if $gs.state == :playing && $current_game
 end
 
 on :mouse_down do |event|
