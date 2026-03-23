@@ -14,6 +14,7 @@ class GameState
     # so we reference them by name (symbol resolved at runtime via const_get)
     :RockClimb,
     :SeatScramble,
+    :JetskiDash
     :Snowman,
   
   ].freeze
