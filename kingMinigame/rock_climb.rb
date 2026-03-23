@@ -140,8 +140,11 @@ class RockClimb < BaseMinigame
 
     @grace_timer -= dt if @grace_timer > 0
 
-    # Poll jump from $keys_held
     if ($keys_held['up'] || $keys_held['w'] || $keys_held['space'] || $keys_held[' ']) && @on_ground
+        # Remove ALL frozen rocks when player jumps
+        @rocks.each { |r| r[:shape].remove if r[:frozen] }
+        @rocks.delete_if { |r| r[:frozen] }
+
         @vel_y     = JUMP_FORCE
         @on_ground = false
     end
@@ -179,8 +182,8 @@ class RockClimb < BaseMinigame
 
   @vel_y     = JUMP_FORCE
   @on_ground = false
-    end
-end
+    end 
+  end
 
   # ── Private helpers ──────────────────────────────────────────────────────────
   private
