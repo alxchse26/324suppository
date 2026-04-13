@@ -28,6 +28,7 @@ require_relative 'seat_scramble'
 #require_relative 'snowman'
 require_relative 'rock_climb'
 require_relative 'jetski_dash'
+require_relative 'passwording'
 
 # ── Window ────────────────────────────────────────────────────────────────────
 set title:      'Mini Games'
