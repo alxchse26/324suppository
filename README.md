@@ -79,7 +79,7 @@ Rule progression (added in order):
 ### 2. Rock Climb
 A physics platformer where falling rocks are both the hazard and the solution.
 
-- The player starts on a ledge at the bottom; a gem sits at the top of the screen
+- The player starts on a ledge at the bottom; a goal gem sits at the top of the screen
 - Rocks fall from above at regular intervals
 - **Landing on top of a rock** freezes it in place (it turns blue-grey), creating a platform
 - Jump again to launch upward — all frozen rocks are cleared on each jump
@@ -100,7 +100,7 @@ A physics platformer where falling rocks are both the hazard and the solution.
 ### 3. Seat Scramble
 A whack-a-mole style game played on a plane seating chart (13 rows × 6 columns, A–F).
 
-- Most seats are **red (occupied)**. A few randomly flip **green (open)** for a limited window
+- Most seats are **red (occupied)**. A few randomly flip **green (open)** for a limited time window
 - Click a green seat before its timer expires to **claim it (grey)**
 - Claimed seats stay grey and never reopen
 - Clicking a red seat does nothing — no penalty
