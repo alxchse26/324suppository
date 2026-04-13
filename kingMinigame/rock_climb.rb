@@ -7,13 +7,6 @@
 #
 # Win  → player reaches the gem at the top of the screen
 # Fail → player falls off the bottom OR a rock lands on the player from above
-#
-# CS Requirements fulfilled in this file:
-#   - Dynamic list:             @rocks array grows on spawn, shrinks on cleanup
-#   - Hash table:               DIFFICULTY constant + per-rock property hashes
-#   - Regex mapping:            CONTROL_MAP uses regex patterns to map keys to actions
-#   - Iterative control struct: .each / .map / .any? loops over rocks every frame
-#   - Graphics:                 Ruby2D shapes and text for all visuals
 
 class RockClimb < BaseMinigame
 
@@ -81,7 +74,8 @@ class RockClimb < BaseMinigame
 
   def initialize(difficulty_level)
     super
-
+    
+    @all_rock_shapes = []
     cfg = DIFFICULTY[@difficulty_level]
     @rock_speed     = cfg[:rock_speed]
     @spawn_interval = cfg[:spawn_interval]
@@ -170,7 +164,7 @@ class RockClimb < BaseMinigame
   # Jump is only allowed when the player is standing on something (@on_ground).
   # ---------------------------------------------------------------------------
   def handle_input(event)
-    return unless event.respond_to?(:key) && event.type == :key_down
+    return unless event.respond_to?(:key) && event.type.to_s.include?('down')
     action = resolve_key(event.key)
     return unless action == :jump
     return unless @on_ground
@@ -184,6 +178,16 @@ class RockClimb < BaseMinigame
   @on_ground = false
     end 
   end
+
+  def cleanup
+    @all_rock_shapes.each(&:remove)
+    @all_rock_shapes.clear
+    @rocks.clear
+    super
+  end
+
+
+
 
   # ── Private helpers ──────────────────────────────────────────────────────────
   private
@@ -308,7 +312,7 @@ class RockClimb < BaseMinigame
   def resolve_rock_collisions
     @on_ground = false if @vel_y > 0   # reset ground flag while falling
 
-    # Iterative control structure: check every rock
+    # ITERATIVE CONTROL STRUCTURE: horizantal overlap check is shared between landing and head hit cases
     @rocks.each do |rock|
       rx = rock[:shape].x
       ry = rock[:shape].y
@@ -411,6 +415,8 @@ class RockClimb < BaseMinigame
       color: COLOR_ROCK, z: 8
     )
 
+    @all_rock_shapes << rock_shape  
+    
     # Append new rock hash to the dynamic list (list grows here)
     @rocks << {
       shape:  rock_shape,
