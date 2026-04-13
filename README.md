@@ -198,7 +198,6 @@ Two read-only flags on every minigame polled each frame by `main.rb`:
 |-------------|---------|----------------|
 | **Dynamic list** | `seat_scramble.rb`, `rock_climb.rb`, `jetski_dash.rb`, `passwording.rb` | `@seats`, `@rocks`, `@obstacles`, `@active_rules` — grow with `<<`, shrink with `-=` or `delete_if` |
 | **Hash table** | All four minigame files | `DIFFICULTY` hash-of-hashes keyed by level; per-object hashes for rocks/obstacles |
-| **Regex mapping** | `rock_climb.rb`, `jetski_dash.rb`, `passwording.rb` | `CONTROL_MAP` maps regex patterns to action symbols; `passwording.rb` evaluates every rule's `:pattern` against input via `String#match?` |
 | **Iterative control structure** | All four minigame files | `.each`, `.select`, `.map`, `.all?`, `.any?`, `.count` used throughout every update loop |
 | **Graphics** | All files | Ruby2D `Rectangle`, `Circle`, `Line`, `Square`, `Text` for all visuals |
 
