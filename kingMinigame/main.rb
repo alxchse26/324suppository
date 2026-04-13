@@ -105,17 +105,7 @@ def handle_minigame_end(won:, fail_reason: nil)
 end
 
 # ── Boot ─────────────────────────────────────────────────────────────────────
-puts "before enter_start"
-STDOUT.flush
-begin
-  enter_start
-  puts "after enter_start"
-  STDOUT.flush
-rescue => e
-  puts "CRASH in enter_start: #{e.class}: #{e.message}"
-  puts e.backtrace.first(5).join("\n")
-  STDOUT.flush
-end
+enter_start
 
 # ── Update loop ───────────────────────────────────────────────────────────────
 update do
