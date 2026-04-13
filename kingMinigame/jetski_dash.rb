@@ -19,7 +19,7 @@ class JetskiDash < BaseMinigame
  
   # ── Constants ────────────────────────────────────────────────────────────────
  
-  GAME_DURATION  = 20.0   # seconds to survive
+  GAME_DURATION  = 15.0   # seconds to survive
  
   PLAYER_W       = 44
   PLAYER_H       = 20
@@ -66,11 +66,11 @@ class JetskiDash < BaseMinigame
   #   :scroll_speed   — pixels/frame obstacles move left
   #   :spawn_interval — seconds between new obstacles
   DIFFICULTY = {
-    1 => { scroll_speed: 3.5, spawn_interval: 2.0 },
-    2 => { scroll_speed: 4.5, spawn_interval: 1.7 },
-    3 => { scroll_speed: 5.5, spawn_interval: 1.4 },
-    4 => { scroll_speed: 6.5, spawn_interval: 1.1 },
-    5 => { scroll_speed: 8.0, spawn_interval: 0.8 },
+    1 => { scroll_speed: 4.0, spawn_interval: 0.8 },
+    2 => { scroll_speed: 5.0, spawn_interval: 0.6 },
+    3 => { scroll_speed: 6.0, spawn_interval: 0.5 },
+    4 => { scroll_speed: 8.0, spawn_interval: 0.4 },
+    5 => { scroll_speed: 10.0, spawn_interval: 0.3 },
   }.freeze
  
   # Obstacle type definitions — Hash Table
@@ -411,6 +411,7 @@ class JetskiDash < BaseMinigame
   def take_hit
     @failed       = true
     @player.color = COLOR_HIT
+    clear_obstacles
   end
  
   # ── Timer ─────────────────────────────────────────────────────────────────
@@ -419,8 +420,21 @@ class JetskiDash < BaseMinigame
     @game_timer -= dt
     if @game_timer <= 0
       @game_timer = 0
-      @completed  = true unless @failed
+      unless @failed
+        @completed = true
+        clear_obstacles
+      end
     end
+  end
+ 
+  # Removes every active obstacle's Ruby2D shapes from the window and empties
+  # the dynamic list. Called on both win and lose so nothing lingers on screen.
+  def clear_obstacles
+    @obstacles.each do |obs|
+      obs[:shape].remove
+      obs[:detail]&.remove
+    end
+    @obstacles.clear
   end
  
   # ── Cosmetic scrolling waves ──────────────────────────────────────────────
