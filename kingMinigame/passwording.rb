@@ -16,7 +16,7 @@
 #                               every rule's :pattern is tested via String#match?
 #   - Iterative control struct: .each / .all? / .count loops evaluate every rule each keypress
 #   - Graphics:                 Ruby2D shapes and text for all visuals
- 
+
 class Passwording < BaseMinigame
  
   # ── Constants ────────────────────────────────────────────────────────────────
@@ -175,19 +175,14 @@ RULE_POOL = [
   # ─────────────────────────────
 
   {
-    label: 'Must NOT contain "a"',
-    pattern: /^[^a]*$/,
+    label: 'Must NOT contain "f"',
+    pattern: /^[^f]*$/,
     example: '(no a)',
   },
   {
-    label: 'Must NOT contain digits',
-    pattern: /^[^0-9]*$/,
+    label: 'Must NOT contain "1"',
+    pattern: /^[^1]*$/,
     example: '(no numbers)',
-  },
-  {
-    label: 'Must NOT repeat any letter twice in a row',
-    pattern: /^(?!.*(.)\1).*$/,
-    example: '(no aa, bb, etc)',
   },
 
   # ─────────────────────────────
