@@ -195,7 +195,7 @@ class Passwording < BaseMinigame
   # symbol pattern needed.
   # ---------------------------------------------------------------------------
   def handle_input(event)
-    return unless event.respond_to?(:key) # FIX: key_down only
+    return unless event.respond_to?(:key) && event.type == :key_down
  
     key    = event.key
     action = resolve_key(key)
