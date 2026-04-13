@@ -195,8 +195,8 @@ class Passwording < BaseMinigame
   # symbol pattern needed.
   # ---------------------------------------------------------------------------
   def handle_input(event)
-    return unless event.respond_to?(:key) && event.type == :key_down
- 
+    return unless event.respond_to?(:key) && event.type.to_s.include?('down')
+    
     key    = event.key
     action = resolve_key(key)
  
@@ -212,8 +212,9 @@ class Passwording < BaseMinigame
              end
       @input_str += char if @input_str.length < INPUT_MAX_LEN
     end
+    
     # :noop and unrecognised multi-char keys (arrows, F-keys) are ignored.
- 
+
     evaluate
     redraw_input
     redraw_rules
