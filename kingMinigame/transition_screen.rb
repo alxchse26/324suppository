@@ -4,8 +4,36 @@
 # update(dt) must be called every frame; returns :done when countdown hits 0.
 
 class TransitionScreen
-  COUNTDOWN_SECONDS = 3.0
+  COUNTDOWN_SECONDS = 8.0
 
+  INSTRUCTIONS = {
+  "Passwording" => [
+    "Create a password that satisfies ALL rules.",
+    "Rules update live as you type.",
+    "Each round adds more rules.",
+    "Complete all rules before time runs out."
+  ],
+
+  "Rock Climb" => [
+    "Jump onto falling rocks to freeze them.",
+    "Use frozen rocks as platforms.",
+    "Climb to the gem at the top.",
+    "Use W, A, and D or the arrow keys to move."
+  ],
+
+  "Jetski Dash" => [
+    "Move with W and S or the arrow keys to dodge obstacles.",
+    "Survive until the timer ends.",
+    "Avoid rocks, logs, and buoys."
+  ],
+
+  "Seat Scramble" => [
+    "Click green seats to claim them.",
+    "Claim enough seats before time runs out.",
+    "Red seats are blocked.",
+    "Grey seats are already claimed."
+  ]
+}.freeze
   def initialize(minigame_name, level, minigame_number, total_minigames)
     @minigame_name    = minigame_name
     @level            = level
@@ -23,7 +51,7 @@ class TransitionScreen
     remaining = [COUNTDOWN_SECONDS - @elapsed, 0].max
 
     # Update the big countdown number
-    display_num = (remaining.ceil).clamp(1, 3)
+    display_num = (remaining.ceil).clamp(1, 8)
     @countdown_text.text = display_num.to_s if @countdown_text
 
     return :done if @elapsed >= COUNTDOWN_SECONDS
@@ -83,15 +111,26 @@ class TransitionScreen
     # "Get Ready" prompt
     @objects << Text.new(
       'Get Ready...',
-      x: 305, y: 295,
+      x: 305, y: 420,
       size: 26,
       color: [0.9, 0.9, 0.4, 1]
     )
+    instructions = INSTRUCTIONS[@minigame_name] || ["No instructions available"]
+
+    instructions.each_with_index do |line, i|
+      @objects << Text.new(
+      line,
+      x: 200,
+      y: 295 + i * 28,
+      size: 18,
+      color: [0.85, 0.85, 0.95, 1]
+      )
+    end
 
     # Big countdown number — stored so update() can mutate it
     @countdown_text = Text.new(
-      '3',
-      x: 375, y: 350,
+      '5',
+      x: 375, y: 450,
       size: 80,
       color: 'white'
     )
