@@ -382,9 +382,8 @@ RULE_POOL = [
     track Text.new("#{n} rule#{n == 1 ? '' : 's'} to satisfy",
                    x: 320, y: 19, size: 13, color: COLOR_DIM, z: 4)
  
-    track Text.new('Time:', x: 676, y: 14, size: 16, color: COLOR_WHITE, z: 4)
-    @timer_text = track Text.new(format_time(@game_timer),
-                                 x: 732, y: 14, size: 16, color: COLOR_PURPLE, z: 4)
+    track Text.new('Time:', x: 556, y: 14, size: 16, color: COLOR_WHITE, z: 4)
+    @timer_text = track Text.new(format_time(@game_timer), x: 606, y: 14, size: 16, color: COLOR_PURPLE, z: 4)
   end
  
   # ---------------------------------------------------------------------------
