@@ -261,9 +261,8 @@ class JetskiDash < BaseMinigame
     track Text.new('JETSKI DASH', x: 20,  y: 10, size: 16, color: 'white', z: 20)
     track Text.new('Survive the water!', x: 220, y: 12, size: 13,
                    color: [0.7, 0.7, 0.7, 1], z: 20)
-    track Text.new('Time:', x: 680, y: 10, size: 16, color: 'white', z: 20)
-    @timer_text = track Text.new(format_time(@game_timer),
-                                 x: 730, y: 10, size: 16, color: 'aqua', z: 20)
+    track Text.new('Time:', x: 560, y: 10, size: 16, color: 'white', z: 20)
+    @timer_text = track Text.new(format_time(@game_timer), x: 610, y: 10, size: 16, color: 'aqua', z: 20)
   end
  
   # ── Movement ─────────────────────────────────────────────────────────────
