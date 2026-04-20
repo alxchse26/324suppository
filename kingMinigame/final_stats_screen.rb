@@ -23,6 +23,16 @@ class FinalStatsScreen
       y -= 20
     end
     
+    if perfect
+      20.times do
+        Square.new(
+          x: rand(800),
+          y: rand(600),
+          size: 5,
+          color: ['red', 'blue', 'green', 'yellow'].sample
+        )
+      end
+    end
 
     @texts << Text.new("Press ENTER to restart", x: 200, y: 50, size: 20)
   end
