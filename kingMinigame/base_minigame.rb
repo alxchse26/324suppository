@@ -4,12 +4,13 @@
 # main.rb only ever calls these four methods + reads the two flag attributes.
 
 class BaseMinigame
-  attr_reader :completed, :failed
+  attr_reader :completed, :failed, :fail_reason
 
   def initialize(difficulty_level)
     @difficulty_level = difficulty_level.clamp(1, 5)
     @completed = false
     @failed    = false
+    @fail_reason = nil
     @objects   = []   # all Ruby2D objects — subclasses push into this for easy cleanup
   end
 
