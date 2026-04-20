@@ -117,7 +117,8 @@ update do
   case $gs.state
 
   when :transition
-    # No timer — waits for ENTER in on :key_down below
+    $current_screen.handle_input(event)
+    if $current_screen.update(0) == :done 
 
   when :playing
     $current_game.update(dt)
