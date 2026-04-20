@@ -14,9 +14,10 @@
 #                                   → (fail, lives == 0) → :failure
 
 # main.rb
+$DEBUG_MODE = true
+
 require 'ruby2d'
 require 'set'
-
 require_relative 'game_state'
 require_relative 'hearts'
 require_relative 'start_screen'
@@ -29,6 +30,7 @@ require_relative 'seat_scramble'
 require_relative 'rock_climb'
 require_relative 'jetski_dash'
 require_relative 'passwording'
+require_relative 'final_stats_screen'
 
 set title:      'Mini Games'
 set width:      800
@@ -71,9 +73,18 @@ def enter_playing
 end
 
 def enter_success
+  puts "ENTER SUCCESS CALLED"
   $gs.state       = :success
   $current_game   = nil
-  $current_screen = SuccessScreen.new(lives: $gs.lives_remaining)
+
+  perfect = $gs.stats.all? do |_, data|
+    data[:wins] == data[:attempts]
+  end
+
+  $current_screen = FinalStatsScreen.new(
+    stats: $gs.stats,
+    perfect: perfect
+  )
 end
 
 def enter_failure
@@ -83,6 +94,10 @@ def enter_failure
 end
 
 def handle_minigame_end(won:, fail_reason: nil)
+  if $DEBUG_MODE
+    enter_success
+    return
+  end
   $current_game.cleanup
   $current_game = nil
 
@@ -109,7 +124,6 @@ enter_start
 
 # ── Update loop ───────────────────────────────────────────────────────────────
 update do
-  now = Time.now.to_f
   now = Time.now.to_f
   dt  = (now - $last_time).clamp(0.0, 0.1)
   $last_time = now
