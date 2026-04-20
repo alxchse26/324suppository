@@ -8,10 +8,10 @@ class TransitionScreen
   # Descriptions of how to play each minigame — keyed by the exact name string
   # produced by GameState#minigame_name so no extra plumbing is needed.
   HOW_TO_PLAY = {
-    'Passwording'   => 'Type a password that satisfies all rules shown. Rules are checked live on every keystroke.',
-    'Rock Climb'    => 'Jump on falling rocks to freeze them into platforms. Reach the gem at the top to win. WASD or arrow keys.',
-    'Seat Scramble' => 'Click the GREEN seats before they close. Claim enough seats before time runs out.',
-    'Jetski Dash'   => 'Dodge rocks, buoys, and logs scrolling in from the right. Survive the full timer. WASD or arrow keys.',
+    'Passwording'   => 'Type a password that satisfies all constraints shown. Progress is automatically checked live on every keystroke.',
+    'Rock Climb'    => 'Use WSAD or arrow keys to jump on falling rocks. Landing on a rock freezes it into place, allowing you to move laterally. Reach the gem at the top before time runs out to win.',
+    'Seat Scramble' => 'Click the GREEN seats to claim them before they are taken. RED seats are occupied and GREY seats are claimed. Claim enough seats before time runs out to win.',
+    'Jetski Dash'   => 'Use WSAD or arrow keys to dodge rocks, buoys, and logs scrolling in from the right. Survive until time runs out to win.',
     'Snowman'       => 'Guess the hidden word one letter at a time before the snowman is complete.',
   }.freeze
 
@@ -35,12 +35,11 @@ class TransitionScreen
     
     # For losses, use minigame-specific reason if available; otherwise use provided reason
     if !won
-      reason = LOSS_REASONS[minigame] || details[:reason] || 'time ran out'
+      reason = LOSS_REASONS[minigame] || details[:reason]
     end
 
     if won
       lines = ["Congrats, you won this round!"]
-      lines << "You completed #{minigame}." if minigame
     else
       lines = ["Sorry, you lost a life."]
       lines << "Reason: #{reason}."
@@ -94,7 +93,7 @@ class TransitionScreen
       color: [0.0, 0.0, 0.1, 0.92]
     )
 
-    draw_status_panel unless @minigame_number == 1
+    draw_status_panel unless @minigame_number == 1 && @won
     draw_hearts
     draw_divider(y: 230)
     draw_next_up
