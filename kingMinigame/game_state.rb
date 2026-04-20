@@ -12,14 +12,15 @@ class GameState
   MINIGAME_CLASSES = [
     # SeatScramble is required below in main.rb after all files are loaded
     # so we reference them by name (symbol resolved at runtime via const_get)
-    :Passwording,
-    :RockClimb,
+  
+    :JetskiDash,
     :SeatScramble,
-    :JetskiDash
+    :Passwording,
+    :RockClimb
   
   ].freeze
 
-  attr_accessor :lives, :level, :minigame_index, :state, :pending_message
+  attr_accessor :lives, :level, :minigame_index, :state, :pending_message, :stats
 
   def initialize
     reset!
@@ -32,6 +33,15 @@ class GameState
     @minigame_index  = 0
     @state           = :start        # :start | :transition | :playing | :success | :failure
     @pending_message = nil
+    @stats = {}
+    MINIGAME_CLASSES.each do |klass|
+      name = klass.name
+      @stats[name] = {
+        wins: 0,
+        attempts: 0,
+        failures: [] # detailed logs
+      }
+    end
   end
 
   # Resolve the current minigame class from the symbol list
