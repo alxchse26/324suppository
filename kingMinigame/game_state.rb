@@ -12,11 +12,10 @@ class GameState
   MINIGAME_CLASSES = [
     # SeatScramble is required below in main.rb after all files are loaded
     # so we reference them by name (symbol resolved at runtime via const_get)
-  
-    :JetskiDash,
-    :SeatScramble,
     :Passwording,
-    :RockClimb
+    :RockClimb,
+    :SeatScramble,
+    :JetskiDash
   
   ].freeze
 
