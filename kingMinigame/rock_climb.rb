@@ -76,6 +76,7 @@ class RockClimb < BaseMinigame
     super
     
     @all_rock_shapes = []
+    @waiting = true  # true until player presses space/enter to start
     cfg = DIFFICULTY[@difficulty_level]
     @rock_speed     = cfg[:rock_speed]
     @spawn_interval = cfg[:spawn_interval]
@@ -113,6 +114,7 @@ class RockClimb < BaseMinigame
     draw_starting_platform
     draw_player
     draw_hud
+    draw_instructions 
   end
 
   # ---------------------------------------------------------------------------
@@ -131,7 +133,7 @@ class RockClimb < BaseMinigame
   # ---------------------------------------------------------------------------
     def update(dt)
     return unless active?
-
+    return if @waiting  # freeze everything until player starts
     @grace_timer -= dt if @grace_timer > 0
 
     if ($keys_held['up'] || $keys_held['w'] || $keys_held['space'] || $keys_held[' ']) && @on_ground
@@ -165,6 +167,16 @@ class RockClimb < BaseMinigame
   # ---------------------------------------------------------------------------
   def handle_input(event)
     return unless event.respond_to?(:key) && event.type.to_s.include?('down')
+     # If waiting, any press of space/enter starts the game
+    if @waiting
+      if event.key == 'space' || event.key == 'return' || event.key == 'enter'
+        @waiting = false
+        clear_instructions
+      end
+      return
+    end
+    
+    
     action = resolve_key(event.key)
     return unless action == :jump
     return unless @on_ground
@@ -180,12 +192,50 @@ class RockClimb < BaseMinigame
   end
 
   def cleanup
+    clear_instructions
     @all_rock_shapes.each(&:remove)
     @all_rock_shapes.clear
     @rocks.clear
     super
   end
+#-------------------------------------------------------------------
+  def draw_instructions # Instructions
+  @instruction_objects = []
 
+  # Dark overlay
+  @instruction_objects << Rectangle.new(
+    x: 0, y: 0, width: 800, height: 600,
+    color: [0.0, 0.0, 0.0, 0.75], z: 50
+  )
+  # Title
+  @instruction_objects << Text.new(
+    'ROCK CLIMB',
+    x: 300, y: 160, size: 32, color: 'white', z: 51
+  )
+  # Instructions
+  [
+    'Jump on falling rocks to climb up!',
+    'Land ON TOP of rocks to freeze them',
+    'Reach the gem at the top to win',
+    'Avoid getting hit from above',
+    "Don't fall off the bottom!",
+  ].each_with_index do |line, i|
+    @instruction_objects << Text.new(
+      line, x: 200, y: 240 + i * 36,
+      size: 16, color: [0.8, 0.8, 0.8, 1], z: 51
+    )
+  end
+  # Press to start
+  @instruction_objects << Text.new(
+    'Press SPACE or ENTER to start!',
+    x: 240, y: 460, size: 20, color: 'lime', z: 51
+  )
+end
+
+def clear_instructions # Clear Instructions
+  @instruction_objects&.each(&:remove)
+  @instruction_objects = []
+end
 
 
 
