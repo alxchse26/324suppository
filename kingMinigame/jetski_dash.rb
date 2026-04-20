@@ -409,6 +409,7 @@ class JetskiDash < BaseMinigame
  
   def take_hit
     @failed       = true
+    @fail_reason = 'Hit an obstacle'
     @player.color = COLOR_HIT
     clear_obstacles
   end
