@@ -110,27 +110,27 @@ enter_start
 # ── Update loop ───────────────────────────────────────────────────────────────
 update do
   now = Time.now.to_f
+  now = Time.now.to_f
   dt  = (now - $last_time).clamp(0.0, 0.1)
   $last_time = now
 
   case $gs.state
+
   when :transition
-    result = $current_screen.update(dt)
-    if result == :done
-      $current_screen.cleanup
-      $current_screen = nil
-      $hearts ||= Hearts.new($gs.lives_remaining)
-      enter_playing
-    end
+    # No timer — waits for ENTER in on :key_down below
+
   when :playing
     $current_game.update(dt)
+
     if $current_game.completed
       handle_minigame_end(won: true)
     elsif $current_game.failed
       handle_minigame_end(won: false)
     end
+
   when :success, :failure
     # Screens draw themselves in initialize; nothing to tick per frame
+
   end
 end
 
@@ -151,7 +151,12 @@ on :key_down do |event|
 
   when :transition
     $current_screen.handle_input(event)
-
+    if $current_screen.update(0) == :done
+      $current_screen.cleanup
+      $current_screen = nil
+      $hearts ||= Hearts.new($gs.lives_remaining)
+      enter_playing
+    end
 
   when :playing
     $current_game.handle_input(event)
