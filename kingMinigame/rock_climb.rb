@@ -418,6 +418,7 @@ end
     return if @grace_timer > 0
     return unless @player.y > DEATH_Y
 
+    @fail_reason = 'Fell off the bottom'
     take_hit
   end
 
@@ -519,6 +520,8 @@ end
   # Called on a rock hit or fall death.
   # Sets @failed so main.rb ends the minigame and deducts a life.
   def take_hit
+    @failed      = true
+    @fail_reason = 'Hit by a rock'
     @failed           = true
     @invincible       = true
     @invincible_timer = 0.0
