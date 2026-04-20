@@ -80,7 +80,7 @@ class TransitionScreen
       color: [0.0, 0.0, 0.1, 0.92]
     )
 
-    draw_status_panel
+    draw_status_panel unless @minigame_number == 1
     draw_hearts
     draw_divider(y: 230)
     draw_next_up
