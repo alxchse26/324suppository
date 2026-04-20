@@ -563,6 +563,7 @@ RULE_POOL = [
       @game_timer = 0
       unless @completed
         @failed = true
+        @fail_reason = 'Ran out of time'
         hints = @active_rules.reject { |r| r[:passing] }.map { |r| r[:example] }.join('  ')
         @status_text&.text  = "Time's up! Missing: #{hints}"
         @status_text&.color = COLOR_FAIL_TEXT
