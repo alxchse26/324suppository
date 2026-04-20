@@ -15,15 +15,28 @@ class TransitionScreen
     'Snowman'       => 'Guess the hidden word one letter at a time before the snowman is complete.',
   }.freeze
 
+  # Loss reasons for each minigame
+  LOSS_REASONS = {
+    'Passwording'   => "You didn't come up with an appropriate password in time.",
+    'Rock Climb'    => "You didn't reach the gem.",
+    'Seat Scramble' => "You didn't select enough seats.",
+    'Jetski Dash'   => "You hit an object.",
+    'Snowman'       => "The snowman was completed.",
+  }.freeze
+
   # ── build_status_message — variadic method ────────────────────────────────
   # Accepts a required `won` boolean and any number of optional keyword details.
   # Demonstrates a method with variable numbers of parameters via **details splat.
   # Callers can pass: reason:, lives:, minigame: — or any subset, or none.
   # The method composes a human-readable status string from whatever it receives.
   def build_status_message(won, **details)
-    reason   = details[:reason]   || (won ? 'completed the challenge' : 'time ran out')
-    lives    = details[:lives]
     minigame = details[:minigame]
+    lives    = details[:lives]
+    
+    # For losses, use minigame-specific reason if available; otherwise use provided reason
+    if !won
+      reason = LOSS_REASONS[minigame] || details[:reason] || 'time ran out'
+    end
 
     if won
       lines = ["Congrats, you won this round!"]
@@ -39,16 +52,17 @@ class TransitionScreen
   end
 
   def initialize(minigame_name, level, minigame_number, total_minigames,
-                 won: true, lives: 3, fail_reason: nil)
-    @minigame_name   = minigame_name
-    @level           = level
-    @minigame_number = minigame_number
-    @total_minigames = total_minigames
-    @won             = won
-    @lives           = lives
-    @fail_reason     = fail_reason
-    @ready           = false
-    @objects         = []
+                 won: true, lives: 3, fail_reason: nil, previous_minigame: nil)
+    @minigame_name    = minigame_name
+    @level            = level
+    @minigame_number  = minigame_number
+    @total_minigames  = total_minigames
+    @won              = won
+    @lives            = lives
+    @fail_reason      = fail_reason
+    @previous_minigame = previous_minigame
+    @ready            = false
+    @objects          = []
     draw
   end
 
@@ -92,11 +106,13 @@ class TransitionScreen
   def draw_status_panel
     # Call variadic method — passing reason and lives as keyword args
     reason = @won ? nil : (@fail_reason || 'time ran out')
+    # For loss reasons, use the previous minigame (the one they just lost)
+    loss_minigame = @won ? @minigame_name : (@previous_minigame || @minigame_name)
     lines  = build_status_message(
       @won,
       reason:   reason,
       lives:    @lives,
-      minigame: nil   # omit minigame name here; it appears in "Next Up" below
+      minigame: loss_minigame
     )
 
     panel_color = @won ? [0.0, 0.18, 0.05, 0.85] : [0.18, 0.03, 0.03, 0.85]
@@ -104,7 +120,7 @@ class TransitionScreen
 
     header_color = @won ? 'lime' : 'red'
     @objects << Text.new(lines[0], x: 60, y: 26,  size: 22, color: header_color)
-    @objects << Text.new(lines[1], x: 60, y: 56,  size: 17, color: 'white')   if lines[1]
+    @objects << Text.new(lines[1], x: 60, y: 56,  size: 14, color: 'white')   if lines[1]
     @objects << Text.new(lines[2], x: 60, y: 80,  size: 17, color: [0.8, 0.8, 0.8, 1]) if lines[2]
     @objects << Text.new(lines[3], x: 60, y: 100, size: 15, color: [0.6, 0.6, 1.0, 1]) if lines[3]
   end
