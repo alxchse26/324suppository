@@ -22,6 +22,7 @@ class FinalStatsScreen
 
       y -= 20
     end
+    
 
     @texts << Text.new("Press ENTER to restart", x: 200, y: 50, size: 20)
   end
