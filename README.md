@@ -65,7 +65,7 @@ A live password-creation challenge where every keystroke is evaluated against a 
 | 4     | 5           | 21s        |
 | 5     | 6           | 18s        |
 
-Rule progression (added in order):
+Rule progression
 1. At least 8 characters
 2. Contains a lowercase letter
 3. Contains a digit [0-9]
@@ -143,7 +143,7 @@ final/
 ├── base_minigame.rb     # Abstract base class all minigames inherit from
 ├── hearts.rb            # Lives HUD — 3 hearts visible throughout gameplay
 ├── start_screen.rb      # Title screen
-├── transition_screen.rb # 3-second countdown between minigames
+├── transition_screen.rb # Instructions and status bar between minigames
 ├── success_screen.rb    # Shown after clearing all 5 levels 
 ├── failure_screen.rb    # Shown when all lives are lost
 ├── passwording.rb       # Minigame 1 — live regex password challenge
