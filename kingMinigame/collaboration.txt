@@ -28,12 +28,12 @@ We had another meeting to go over progress and confirm that the structure is sui
 
 We decided that a passwording game for regular expression matching would also be a good idea, since none of the games we originally made would be able to demonstrate that. Joe built passwording with Claude in a manner that would fully utilize this feature. 
 
-Bridget is working on her Rock Climbing game and is directing Claude to fully utilize the iterative control structure she read about in the textbook and spoke about with King previously. 
+Bridget is updating her Rock Climbing game to make sure all fallen rocks dissapear when moving to the next minigame and using Claude to debug. 
 
 
 03/31
 
-At this point, we have the three core video games operating correctly. Some of the objects aren't clearing off the screen, to which we had Claude assist in addressing. But otherwise everything is going well. Prof. King seems impressed with our progress, but rock climbing is too hard for her. We decided to include instructions in the beginning for each game since the operations maybe unclear to new players. 
+At this point, we have the three core video games operating correctly. Some of the objects aren't clearing off the screen on Jet ski but Rock climb is fully working, to which we had Claude assist in addressing. But otherwise everything is going well. Prof. King seems impressed with our progress, but rock climbing is too hard for her. We decided to include instructions in the beginning for each game since the operations maybe unclear to new players. 
 
 04/13
 
