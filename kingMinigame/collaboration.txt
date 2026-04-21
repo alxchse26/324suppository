@@ -9,11 +9,34 @@ We decided that a reasonable expectation is to assign each person one minigame t
 
 We met briefly on a facetime call just to get started on what our plan was for our meeting next Monday. We are rolling. Bridget is working on the rockclimbing minigame. Alex is working on general structure of the minigame and starting the whack-a-mole game. Joe is working on transitions and visuals. 
 
-Alex - I brought a working standalone Snowman/Hangman game to Claude and asked how to scale it into a full multi-minigame system. I provided clear, specific structural requirements unprompted: separate files per minigame, a central orchestrator handling all screen transitions, a shared lives system, and a defined win/fail contract every minigame must satisfy. Claude proposed the BaseMinigame abstract class pattern and a symbol-driven state machine. I approved and directed the implementation.
+We brought a working standalone Snowman/Hangman game to Claude and asked how to scale it into a full multi-minigame system. We provided clear, specific structural requirements unprompted: separate files per minigame, a central orchestrator handling all screen transitions, a shared lives system, and a defined win/fail contract every minigame must satisfy. Claude proposed the BaseMinigame abstract class pattern and a symbol-driven state machine.
 
 03/18
 
-Alex - I provided a detailed, self-directed design brief for the first minigame. I described it as a whack-a-mole variant on a plane seating map, attaching a real airline app screenshot as visual reference. I specified three distinct seat states (open/occupied/owned), a per-seat countdown timer, a global flip timer, difficulty scaling across all 5 levels, and exact win/fail conditions. Claude implemented directly from this prompt. 
+Alex - I provided a multi-paragraph detailed, self-directed design brief for the first minigame, seat scrambler. I described it as a whack-a-mole variant on a plane seating map, attaching a real airline app screenshot as visual reference. I specified three distinct seat states (open/occupied/owned), a per-seat countdown timer, a global flip timer, difficulty scaling across all 5 levels, and exact win/fail conditions. Claude implemented directly from this prompt. 
 
 03/19 
+
+We created a complete project scaffold from scratch across 10 files: main.rb, game_state.rb, base_minigame.rb, hearts.rb, four screen (start, transition, win, lose) files, and more minigames. We explicitly ensured that Ruby's unique language features be demonstrated throughout the minigames. We directed Claude to adapt the existing Snowman game into the new architecture rather than rewrite it.
+
+Alex - I encountered a series of LoadError and NameError crashes after receiving the files and brought it to Claude. It reported a Ruby2D::KeyEvent class error. Claude had assumed a class name that doesn't exist in Ruby2D 0.12.1. 
+
+03/23
+
+We had another meeting to go over progress and confirm that the structure is suitable for what we want to achieve in this project. In speaking with Prof. King, we came up with the following requirements to meet in terms of utilizing Ruby's unique features. The features we will be exploring are: Dynamic list, Hash table, Iterative control structures, and Graphics. 
+
+
+03/31
+
+At this point, we have the three core video games operating correctly. Some of the objects aren't clearing off the screen, to which we had Claude assist in addressing. But otherwise everything is going well. Prof. King seems impressed with our progress, but rock climbing is too hard. We decided to include instructions in the beginning for each game since the operations maybe unclear to new players. 
+
+04/13
+
+During this meeting with Prof. King, she expressed the need for a tutorial round and/or allowing the user to selectively press enter on the transition screen to enter the next minigame. It was also brought to our attention that there is no update given on why you lost a life, how many lives you currently have, etc. We used Claude to modify our current files and specified that the transition screen should retain all existing content (next game name, how to play, level badge) while adding the new status panel and heart display.
+
+Prof. King also asked us to include something we recently covered in class, variable parameter structure. The need for a status bar allowed us to meet this requirement easily. We requested a function taking variable numbers of parameters that generates a contextual status message on the transition screen. Depending on what occured in the last round and how the user performed, different num of messages are displayed. This may include a win message, loss message with reason, lives remaining, and a sign-off line. We emphasized that each minigame have its own specific failure reason string.
+
+04/20
+
+In our meeting with Prof. King today, we discussed what the final steps are when completing our project. The key problem we are having now is that the hearts do not show on every minigame screen. 
 
