@@ -149,7 +149,11 @@ final/
 ├── passwording.rb       # Minigame 1 — live regex password challenge
 ├── rock_climb.rb        # Minigame 2 — physics platformer
 ├── seat_scramble.rb     # Minigame 3 — plane seat whack-a-mole
-└── jetski_dash.rb       # Minigame 4 — side-scrolling dodge game
+├── jetski_dash.rb       # Minigame 4 — side-scrolling dodge game
+├── directions.txt       # Directions to explain how to install language complier
+├── collaboration.txt    # Discussion/Collaboration Log detailing our updates through out the term project
+└── final_stats_screen.rb # Final Screen - summarizes which levels of minigame the user won and lost during your run
+
 ```
 
 ---
