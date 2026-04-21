@@ -34,15 +34,14 @@ ruby main.rb
 ## Gameplay Overview
 
 - The player starts with **3 lives**
-- Four minigames are presented **back to back** in a fixed order:
-  `Passwording → Rock Climb → Seat Scramble → Jetski Dash`
+- Four minigames are presented **back to back** in a fixed order
 - Completing all four advances to the next **level** (1–5)
 - Each new level replays the same sequence at **increased difficulty**
 - Failing a minigame costs **1 life** and automatically moves to the next one
 - Losing all 3 lives ends the run — the player can restart from the beginning
 - Clearing all 5 levels triggers the **victory screen**
 
-A **3-second countdown transition screen** appears between every minigame showing what's coming next and your current level progress.
+A **transition screen** appears between every minigame showing what's coming next and your current level progress.
 
 ---
 
@@ -150,8 +149,7 @@ final/
 ├── passwording.rb       # Minigame 1 — live regex password challenge
 ├── rock_climb.rb        # Minigame 2 — physics platformer
 ├── seat_scramble.rb     # Minigame 3 — plane seat whack-a-mole
-├── jetski_dash.rb       # Minigame 4 — side-scrolling dodge game
-└── dictionary.txt       # Word list (used by Snowman if re-enabled)
+└── jetski_dash.rb       # Minigame 4 — side-scrolling dodge game
 ```
 
 ---
