@@ -90,7 +90,7 @@ Type the following and press Enter:
 You should see output like:
 
    ruby 3.4.1 (2025-02-26 revision d2930cf0b6) [x64-mingw-ucrt]
-If you see this, Ruby is installed correctly. ✅
+If you see this, Ruby is installed correctly. 
 
 Also verify the gem package manager is working:
 
