@@ -144,7 +144,7 @@ final/
 ├── hearts.rb            # Lives HUD — 3 hearts visible throughout gameplay
 ├── start_screen.rb      # Title screen
 ├── transition_screen.rb # 3-second countdown between minigames
-├── success_screen.rb    # Shown after clearing all 5 levels
+├── success_screen.rb    # Shown after clearing all 5 levels 
 ├── failure_screen.rb    # Shown when all lives are lost
 ├── passwording.rb       # Minigame 1 — live regex password challenge
 ├── rock_climb.rb        # Minigame 2 — physics platformer
@@ -202,3 +202,4 @@ Two read-only flags on every minigame polled each frame by `main.rb`:
 | **Hash table** | All four minigame files | `DIFFICULTY` hash-of-hashes keyed by level; per-object hashes for rocks/obstacles |
 | **Iterative control structure** | All four minigame files | `.each`, `.select`, `.map`, `.all?`, `.any?`, `.count` used throughout every update loop |
 | **Graphics** | All files | Ruby2D `Rectangle`, `Circle`, `Line`, `Square`, `Text` for all visuals |
+| **Variable Parameter Structure** | `transition_screen.rb` | Accepts variable number of `@details` that will be displayed on the status bar |
