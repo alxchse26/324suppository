@@ -7,7 +7,7 @@ We decided that a reasonable expectation is to assign each person one minigame t
 
 03/17
 
-We met briefly on a facetime call just to get started on what our plan was for our meeting next Monday. We are rolling. Bridget is working on the rockclimbing minigame. Alex is working on general structure of the minigame and starting the whack-a-mole game. Joe is working on transitions and visuals. 
+We met briefly on a facetime call just to get started on what our plan was for our meeting next Monday. We are rolling. Bridget is working on the rockclimbing minigame, she prompted Claude on base code and how to keep the player on the same X-axis, unless they jumped in which the player uses "gravity" and fell to the floor. Alex is working on general structure of the minigame and starting the whack-a-mole game. Joe is working on transitions and visuals. 
 
 We brought a working standalone Snowman/Hangman game to Claude and asked how to scale it into a full multi-minigame system. We provided clear, specific structural requirements unprompted: separate files per minigame, a central orchestrator handling all screen transitions, a shared lives system, and a defined win/fail contract every minigame must satisfy. Claude proposed the BaseMinigame abstract class pattern and a symbol-driven state machine.
 
