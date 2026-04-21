@@ -15,7 +15,7 @@ set height: 600
 set background: 'navy'
 
 # Game variables - CHANGED to instance variables (@)
-words = File.readlines("words.txt", chomp: true)
+words = File.readlines("dictionary.txt", chomp: true)
 @secret_word = words.sample.downcase
 @display = Array.new(@secret_word.length, "_")
 @guessed_letters = []
@@ -23,7 +23,9 @@ words = File.readlines("words.txt", chomp: true)
 @max_wrong = 6
 @game_over = false
 @won = false
-@words = words  # Store for reset
+@words = words # for reset
+
+puts "Secret word: #{@secret_word}"
 
 # Input buffer
 @current_input = ""
@@ -158,7 +160,9 @@ def draw_snowman(wrong_count)
     # Eyes
     @snowman_parts << Circle.new(x: 390, y: 200, radius: 5, color: 'black')
     @snowman_parts << Circle.new(x: 410, y: 200, radius: 5, color: 'black')
+  end
     # Buttons
+  if wrong_count >= 4
     @snowman_parts << Circle.new(x: 400, y: 300, radius: 4, color: 'black')
     @snowman_parts << Circle.new(x: 400, y: 320, radius: 4, color: 'black')
   end
@@ -323,10 +327,6 @@ on :key_down do |event|
     
     @input_display.text = "Input: #{@current_input}"
   end
-end
-
-# Show the window
-show
 end
 
 # Show the window
