@@ -28,7 +28,7 @@ We had another meeting to go over progress and confirm that the structure is sui
 
 We decided that a passwording game for regular expression matching would also be a good idea, since none of the games we originally made would be able to demonstrate that. Joe built passwording with Claude in a manner that would fully utilize this feature. 
 
-Bridget is updating her Rock Climbing game to make sure all fallen rocks dissapear when moving to the next minigame and using Claude to debug. 
+Bridget is updating her Rock Climbing game to make sure all fallen rocks disappear when moving to the next minigame and using Claude to debug. 
 
 Joe employed Claude to build Jetski Dash, another game that uses the same structures as Rock Climb. Rock Climb was used as a base code, and its main purpose was to help fill out the game catalog. Joe also adjusted the difficulty hashing table to make later levels more challenging.
 
@@ -45,6 +45,6 @@ Prof. King also asked us to include something we recently covered in class, vari
 
 04/20
 
-In our meeting with Prof. King today, we discussed what the final steps are when completing our project. The key problem we are having now is that the hearts do not show on every minigame screen. Since the documentation and report are due tomorrow, we decided to save that stuff for the term changes. She also told us that the instructions are a little vague, so we went ahead and fixed that immediately. 
+In our meeting with Prof. King today, we discussed what the final steps are when completing our project. The key problem we are having now is that the hearts do not show on every minigame screen. Since the documentation and report are due tomorrow, we decided to save that stuff for the term changes. She also told us that the instructions are a little vague, so we went ahead and fixed that immediately. We will be showing our final Term Project with all documented edits added on Friday 4/24. 
 
 
