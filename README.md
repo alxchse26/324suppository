@@ -198,11 +198,3 @@ Two read-only flags on every minigame polled each frame by `main.rb`:
 | **Hash table** | All four minigame files | `DIFFICULTY` hash-of-hashes keyed by level; per-object hashes for rocks/obstacles |
 | **Iterative control structure** | All four minigame files | `.each`, `.select`, `.map`, `.all?`, `.any?`, `.count` used throughout every update loop |
 | **Graphics** | All files | Ruby2D `Rectangle`, `Circle`, `Line`, `Square`, `Text` for all visuals |
-
----
-
-## Discussion Log
-
-- **03/11** — 
-- **03/17** — 
-- **03/19** — 
