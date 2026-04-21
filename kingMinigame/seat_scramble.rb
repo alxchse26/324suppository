@@ -302,6 +302,7 @@ class SeatScramble < BaseMinigame
     if @game_timer <= 0
       @game_timer = 0
       @failed     = true unless @completed
+      @fail_reason = 'Not enough seats claimed'
     end
   end
 
