@@ -30,6 +30,8 @@ We decided that a passwording game for regular expression matching would also be
 
 Bridget is updating her Rock Climbing game to make sure all fallen rocks dissapear when moving to the next minigame and using Claude to debug. 
 
+Joe employed Claude to build Jetski Dash, another game that uses the same structures as Rock Climb. Rock Climb was used as a base code, and its main purpose was to help fill out the game catalog. Joe also adjusted the difficulty hashing table to make later levels more challenging.
+
 
 03/31
 
