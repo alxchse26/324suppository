@@ -14,7 +14,6 @@
 #                                   → (fail, lives == 0) → :failure
 
 # main.rb
-$DEBUG_MODE = true
 
 require 'ruby2d'
 require 'set'
@@ -53,6 +52,7 @@ def enter_start
 end
 
 def enter_transition(won: true, fail_reason: nil)
+  $hearts&.remove 
   $gs.state       = :transition
   $current_screen = TransitionScreen.new(
     $gs.minigame_name,
@@ -70,40 +70,41 @@ def enter_playing
   $current_screen = nil
   $current_game   = $gs.current_minigame_class.new($gs.level)
   $current_game.start
+  #$hearts = Hearts.new($gs.lives_remaining) 
 end
 
 def enter_success
-  puts "ENTER SUCCESS CALLED"
   $gs.state       = :success
-  $current_game   = nil
+  
+  $current_game&.cleanup
+  $current_screen&.cleanup
 
-  perfect = $gs.stats.all? do |_, data|
-    data[:wins] == data[:attempts]
-  end
-
+  $current_game = nil
   $current_screen = FinalStatsScreen.new(
     stats: $gs.stats,
-    perfect: perfect
+    perfect: $gs.stats.all? { |_, d| d[:wins] == d[:attempts] }
   )
 end
 
 def enter_failure
   $gs.state       = :failure
   $current_game   = nil
-  $current_screen = FailureScreen.new(lives: $gs.lives_remaining)
+  $current_screen = FailureScreen.new(
+    lives: $gs.lives_remaining,
+    stats: $gs.stats
+  )
 end
 
 def handle_minigame_end(won:, fail_reason: nil)
-  if $DEBUG_MODE
-    enter_success
-    return
-  end
   $current_game.cleanup
   $current_game = nil
 
+  # Record the result before advancing
+  $gs.record_result(won: won, level: $gs.level, fail_reason: fail_reason)
+
   unless won
     $gs.lose_life!
-    $hearts.update($gs.lives_remaining)
+    $hearts&.update($gs.lives_remaining)
     unless $gs.alive?
       enter_failure
       return
@@ -139,11 +140,11 @@ update do
     if $current_game.completed
       handle_minigame_end(won: true)
     elsif $current_game.failed
-      handle_minigame_end(won: false)
+      handle_minigame_end(won: false, fail_reason: $current_game.fail_reason)
     end
 
   when :success, :failure
-    # Screens draw themselves in initialize; nothing to tick per frame
+     $current_screen.update if $current_screen
 
   end
 end
