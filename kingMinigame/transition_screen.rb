@@ -8,12 +8,42 @@ class TransitionScreen
   # Descriptions of how to play each minigame — keyed by the exact name string
   # produced by GameState#minigame_name so no extra plumbing is needed.
   HOW_TO_PLAY = {
-    'Passwording'   => 'Type a password that satisfies all constraints shown. Progress is automatically checked live on every keystroke.',
-    'Rock Climb'    => 'Use WSAD or arrow keys to jump on falling rocks. Landing on a rock freezes it into place, allowing you to move laterally. Reach the gem at the top before time runs out to win.',
-    'Seat Scramble' => 'Click the GREEN seats to claim them before they are taken. RED seats are occupied and GREY seats are claimed. Claim enough seats before time runs out to win.',
-    'Jetski Dash'   => 'Use WSAD or arrow keys to dodge rocks, buoys, and logs scrolling in from the right. Survive until time runs out to win.',
-    'Snowman'       => 'Guess the hidden word one letter at a time before the snowman is complete.',
-  }.freeze
+  'Passwording' => [
+    "You're a hacker trying to crack the ultimate password!",
+    "Type into the box and watch the rules on screen.",
+    "Each rule gets a green checkmark when satisfied.",
+    "Satisfy ALL rules at the same time to win!",
+    "Tip: Your password is checked automatically as you type."
+  ],
+  'Rock Climb' => [
+    "You're a PL student practicing for your rock climbing adventure with your classmates and Professor King.", 
+    "Your goal is to reach the gold star at the top! (Maybe you will get a extra credit on the final)",
+    "Rocks fall from above — jump ON TOP of them to freeze them in place.",
+    "Use frozen rocks as stepping stones to climb higher.",
+    "Move left and right with A/D or arrow keys.",
+    "Press SPACE, W, or UP arrow to jump.",
+    "Tip: Once you land on a platform, it freezes and you can move horizontally off the rock!"
+  ],
+  'Seat Scramble' => [
+    "You just boarded the airplane trying to grab the best seats, in first class of course!",
+    "GREEN seats are available — click them fast before they disappear!",
+    "RED seats are already taken — clicking them does nothing.",
+    "GREY seats are ones you have already claimed.",
+    "Claim enough seats before the timer runs out to win!",
+    "Tip: Seats flip between available and taken quickly, stay alert!"
+  ],
+  'Jetski Dash' => [
+    "You're racing a jetski through dangerous waters!",
+    "Rocks, buoys, and logs scroll in fast from the right.",
+    "Move UP and DOWN with W/S or the arrow keys to dodge them.",
+    "Survive until the timer hits zero to win!",
+    "Tip: The obstacles get faster every level, keep your eyes on the ocean!"
+  ],
+  'Snowman' => [
+    "Guess the hidden word one letter at a time.",
+    "Before the snowman is complete!"
+  ]
+}.freeze
 
   # Loss reasons for each minigame
   LOSS_REASONS = {
@@ -95,9 +125,9 @@ class TransitionScreen
 
     draw_status_panel unless @minigame_number == 1 && @won
     draw_hearts
-    draw_divider(y: 230)
+    draw_divider(y: 130)
     draw_next_up
-    draw_divider(y: 430)
+    draw_divider(y: 500)
     draw_continue_prompt
   end
 
@@ -142,28 +172,33 @@ class TransitionScreen
 
   # ── Next up section (middle) ──────────────────────────────────────────────
   def draw_next_up
-    # Level badge
-    @objects << Rectangle.new(x: 320, y: 242, width: 160, height: 36,
-                               color: [0.2, 0.2, 0.8, 0.9])
+  # Level badge — moved up
+  @objects << Rectangle.new(x: 320, y: 140, width: 160, height: 36,
+                             color: [0.2, 0.2, 0.8, 0.9])
+  @objects << Text.new(
+    "LEVEL #{@level}  ·  #{@minigame_number} / #{@total_minigames}",
+    x: 332, y: 148, size: 17, color: 'white'
+  )
+  @objects << Text.new('Next Up:', x: 345, y: 188, size: 20, color: [0.6, 0.8, 1, 1])
+  @objects << Text.new(@minigame_name, x: 250, y: 210, size: 34, color: 'white')
+
+  # Draw each instruction line separately starting lower
+  lines = HOW_TO_PLAY[@minigame_name] || ['Get ready!']
+  lines.each_with_index do |line, i|
     @objects << Text.new(
-      "LEVEL #{@level}  ·  #{@minigame_number} / #{@total_minigames}",
-      x: 332, y: 250, size: 17, color: 'white'
+      line,
+      x: 60, y: 265 + i * 24,
+      size: 14,
+      color: i == lines.length - 1 ? [1.0, 0.9, 0.4, 1] : [0.75, 0.85, 1.0, 1]
     )
-
-    @objects << Text.new('Next Up:', x: 345, y: 292, size: 20, color: [0.6, 0.8, 1, 1])
-    @objects << Text.new(@minigame_name, x: 250, y: 318, size: 34, color: 'white')
-
-    # How to play description
-    desc = HOW_TO_PLAY[@minigame_name] || 'Get ready!'
-    draw_wrapped_text(desc, x: 60, y: 366, max_width: 680, size: 15,
-                      color: [0.75, 0.85, 1.0, 1])
   end
+end
 
   # ── Continue prompt (bottom) ──────────────────────────────────────────────
   def draw_continue_prompt
     @objects << Text.new(
       'Press  ENTER  when you are ready',
-      x: 240, y: 448, size: 22, color: 'lime'
+      x: 240, y: 520, size: 22, color: 'lime'
     )
   end
 
