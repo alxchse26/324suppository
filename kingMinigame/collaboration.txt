@@ -47,4 +47,5 @@ Prof. King also asked us to include something we recently covered in class, vari
 
 In our meeting with Prof. King today, we discussed what the final steps are when completing our project. The key problem we are having now is that the hearts do not show on every minigame screen. Since the documentation and report are due tomorrow, we decided to save that stuff for the term changes. She also told us that the instructions are a little vague, so we went ahead and fixed that immediately. We will be showing our final Term Project with all documented edits added on Friday 4/24. 
 
-
+4/22
+Bridget fixes a few minor errors in the code including, debugging the issues with "nailgun" and capitalizing letters on Windows for passwording.rb, creating detailed instructions, loading the failure/win screen correctly, making the gem in rock_climb.rb into a golden star because Professor King likes giving gold stars to her students and adding some more comments. This was all assisted with Claude. 
