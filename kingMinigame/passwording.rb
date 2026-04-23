@@ -156,7 +156,7 @@ RULE_POOL = [
 
   {
     label: 'Must contain "nailgun" somewhere',
-    pattern: /ab/,
+    pattern: /nailgun/,
     example: '...nailgun...',
   },
   {
@@ -242,6 +242,7 @@ RULE_POOL = [
  
     @cursor_timer = 0.0
     @cursor_on    = true
+    @caps_lock    = false 
  
     @timer_text    = nil
     @input_box     = nil
@@ -293,33 +294,47 @@ RULE_POOL = [
   # Single printable characters are caught by key.length == 1 — no exhaustive
   # symbol pattern needed.
   # ---------------------------------------------------------------------------
-  def handle_input(event)
-    return unless event.respond_to?(:key) && event.type.to_s.include?('down')
-    
-    key    = event.key
-    action = resolve_key(key)
- 
-    if action == :delete_char
-      @input_str = @input_str[0..-2] unless @input_str.empty?
-    elsif action == :type_space
-      @input_str += ' ' if @input_str.length < INPUT_MAX_LEN
-    elsif action.nil? && key.length == 1
-      char = if event.respond_to?(:shift) && event.shift
-               SHIFT_MAP.fetch(key, key.upcase)
-             else
-               key
-             end
-      @input_str += char if @input_str.length < INPUT_MAX_LEN
-    end
-    
-    # :noop and unrecognised multi-char keys (arrows, F-keys) are ignored.
+ def handle_input(event)
+  return unless event.respond_to?(:key) && event.type.to_s.include?('down')
 
-    evaluate
-    redraw_input
-    redraw_rules
-    redraw_strength
-    redraw_status
+  key = event.key
+
+  # Handle caps lock toggle
+  if key == 'caps lock'
+    @caps_lock = !@caps_lock
+    return
   end
+
+  action = resolve_key(key)
+
+  if action == :delete_char
+    @input_str = @input_str[0..-2] unless @input_str.empty?
+  elsif action == :type_space
+    @input_str += ' ' if @input_str.length < INPUT_MAX_LEN
+  elsif action.nil? && key.length == 1
+    # Determine if shift is active via $keys_held or event.shift
+    shifted = $keys_held['left shift'] || $keys_held['right shift'] ||
+              (event.respond_to?(:shift) && event.shift)
+
+    # XOR: caps lock alone = uppercase, shift alone = uppercase,
+    # caps lock AND shift together = lowercase (standard keyboard behavior)
+    effective_shift = shifted ^ @caps_lock
+
+    char = if effective_shift
+             SHIFT_MAP.fetch(key, key.upcase)
+           else
+             key
+           end
+
+    @input_str += char if @input_str.length < INPUT_MAX_LEN
+  end
+
+  evaluate
+  redraw_input
+  redraw_rules
+  redraw_strength
+  redraw_status
+ end
  
   # ── Private helpers ──────────────────────────────────────────────────────────
   private
