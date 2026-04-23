@@ -1,133 +1,124 @@
 # final_stats_screen.rb
 class FinalStatsScreen
   def initialize(stats:, perfect:)
-    @stats = stats
+    @stats   = stats
     @perfect = perfect
-
-    @texts = []
-    @shapes = []
-
-    @alpha = 0.0
-    @selected_index = 0
-
+    @texts   = []
+    @shapes  = []
+    @alpha   = 0.0
     build_ui
   end
 
-  # ─────────────────────────────────────────────
-  # UI BUILD
-  # ─────────────────────────────────────────────
   def build_ui
-    @texts << Text.new(
-      @perfect ? "PERFECT RUN!" : "FINAL RESULTS",
-      x: 260,
-      y: 40,
-      size: 34,
-      color: @perfect ? 'green' : 'yellow'
+    # Dark background
+    @shapes << Rectangle.new(
+      x: 0, y: 0, width: 800, height: 600,
+      color: [0.05, 0.05, 0.05, 1.0], z: 0
     )
 
-    y_left = 120
-    y_right = 120
-    index = 0
-
-    @stats.each do |game, data|
-      game_name = game.gsub(/([a-z])([A-Z])/, '\1 \2')
-
-      # LEFT SIDE (game names)
-      @texts << Text.new(
-        game_name,
-        x: 80,
-        y: y_left,
-        size: 22,
-        color: 'white'
-      )
-
-      # RIGHT SIDE (summary)
-      summary_color = data[:wins] == data[:attempts] ? 'green' : 'white'
-
-      @texts << Text.new(
-        "Wins: #{data[:wins]} / #{data[:attempts]}",
-        x: 350,
-        y: y_right,
-        size: 20,
-        color: summary_color
-      )
-
-      # Fail details
-      (data[:failures] || []).each do |f|
-        @texts << Text.new(
-          "L#{f[:level]}: #{f[:reason]}",
-          x: 380,
-          y: y_right + 20,
-          size: 14,
-          color: 'red'
-        )
-        y_right += 18
-      end
-
-      # spacing per game
-      y_left += 70
-      y_right = y_left
-
-      index += 1
-    end
-
-    @texts << Text.new(
-      "Press ENTER to restart",
-      x: 240,
-      y: 540,
-      size: 18,
-      color: 'gray'
-    )
-
-    # PERFECT RUN BADGE
-    if @perfect
-      @badge = Text.new(
-        "🏆 PERFECT!",
-        x: 320,
-        y: 80,
-        size: 28,
-        color: 'yellow'
-      )
-      @texts << @badge
-    end
-
-    # BACKGROUND CONFETTI (simple)
-    25.times do
+    # Confetti — drawn at z=1 so it's behind text
+    100.times do
       @shapes << Square.new(
         x: rand(800),
         y: rand(600),
-        size: rand(4..8),
-        color: ['red', 'blue', 'yellow', 'green'].sample
+        size: rand(4..10),
+        color: ['red', 'blue', 'yellow', 'green', 'orange', 'purple', 'white'].sample,
+        z: 1
+      )
+    end
+
+    # "YOU WON" above everything
+    @texts << Text.new(
+      'YOU WON!',
+      x: 290, y: 10,
+      size: 36, color: 'green', z: 10
+    )
+
+    # FINAL RESULTS or PERFECT RUN title
+    @texts << Text.new(
+      @perfect ? 'PERFECT RUN!' : 'FINAL RESULTS',
+      x: 240, y: 55,
+      size: 34,
+      color: @perfect ? 'lime' : 'yellow',
+      z: 10
+    )
+
+    # Divider
+    @shapes << Line.new(
+      x1: 40, y1: 108, x2: 760, y2: 108,
+      width: 1, color: [0.4, 0.4, 0.4, 0.8], z: 10
+    )
+
+    # Column headers
+    @texts << Text.new('Game',         x: 60,  y: 116, size: 15, color: [0.8, 0.8, 0.8, 1], z: 10)
+    @texts << Text.new('Wins',         x: 360, y: 116, size: 15, color: [0.8, 0.8, 0.8, 1], z: 10)
+    @texts << Text.new('Failed Levels',x: 500, y: 116, size: 15, color: [0.8, 0.8, 0.8, 1], z: 10)
+
+    y = 148
+    @stats.each do |game_key, data|
+      name     = game_key.to_s.gsub(/([A-Z])/, ' \1').strip
+      wins     = data[:wins]     || 0
+      attempts = data[:attempts] || 0
+      failures = data[:failures] || []
+
+      # Game name
+      @texts << Text.new(name, x: 60, y: y, size: 18, color: 'white', z: 10)
+
+      # Wins
+      win_color = wins == attempts && attempts > 0 ? 'lime' : [1.0, 0.6, 0.6, 1]
+      @texts << Text.new("#{wins} / #{attempts}", x: 360, y: y, size: 18, color: win_color, z: 10)
+
+      # Failed levels
+      if failures.empty?
+        @texts << Text.new('none', x: 500, y: y, size: 18, color: 'lime', z: 10)
+      else
+        failed_str = failures.map { |f| "L#{f[:level]}: #{f[:reason]}" }.join('  ')
+        @texts << Text.new(failed_str, x: 500, y: y, size: 13, color: 'red', z: 10)
+      end
+
+      y += 60
+    end
+
+    # Divider above prompt
+    @shapes << Line.new(
+      x1: 40, y1: 530, x2: 760, y2: 530,
+      width: 1, color: [0.4, 0.4, 0.4, 0.8], z: 10
+    )
+
+    # Press ENTER prompt
+    @texts << Text.new(
+      'Press ENTER to restart',
+      x: 270, y: 548,
+      size: 18, color: 'gray', z: 10
+    )
+
+    # Perfect badge
+    if @perfect
+      @texts << Text.new(
+        '★ PERFECT RUN! ★',
+        x: 270, y: 580,
+        size: 16, color: 'gold', z: 10
       )
     end
   end
 
-  # ─────────────────────────────────────────────
-  # INPUT
-  # ─────────────────────────────────────────────
   def handle_input(event)
-    return :restart if event.key == 'return'
+    return :restart if event.respond_to?(:key) && 
+                       (event.key == 'return' || event.key == 'enter')
+    nil
   end
 
-  # ─────────────────────────────────────────────
-  # UPDATE (animation)
-  # ─────────────────────────────────────────────
-  def update
-    @alpha = [@alpha + 0.03, 1].min
-
-    @texts.each do |t|
-      t.opacity = @alpha if t.respond_to?(:opacity=)
-    end
-
+  def update(dt = nil)
+    # Animate confetti falling and drifting
     @shapes.each do |s|
-      s.y += 0.3
-      s.x += Math.sin(Time.now.to_f * 2) * 0.2
+      next unless s.is_a?(Square)
+      s.y += 0.6
+      s.x += Math.sin(Time.now.to_f + s.y * 0.05) * 0.4
+      # Wrap confetti back to top when it falls off screen
+      s.y = rand(-20..0) if s.y > 610
     end
   end
 
-  # ─────────────────────────────────────────────
-  # CLEANUP
-  # ─────────────────────────────────────────────
   def cleanup
     @texts.each(&:remove)
     @shapes.each(&:remove)
