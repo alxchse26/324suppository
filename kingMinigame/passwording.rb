@@ -69,142 +69,119 @@ class Passwording < BaseMinigame
   # ── Rule pool — Hash Table ────────────────────────────────────────────────────
   # Ordered easy → hard. Round N uses the first (N+1) rules.
   # Each rule is a Hash: :label, :pattern (Regexp), :example (fragment).
-RULE_POOL = [
-  # ─────────────────────────────
-  # BASIC STRUCTURAL RULES
-  # ─────────────────────────────
+  # ── Rule pool — Hash Table ────────────────────────────────────────────────────
+  # Ordered easy → hard. Round N uses the first (N+1) rules.
+  # Each rule is a Hash: :label, :pattern (Regexp), :example (fragment).
+RULE_POOLS = {
+  length: [
+    {
+      label: 'Must be at least 8 characters',
+      pattern: /.{8,}/,
+      example: 'aaaaaaaa',
+    },
+    {
+      label: 'Must be at least 12 characters',
+      pattern: /.{12,}/,
+      example: 'aaaaaaaaaaaa',
+    },
+    {
+      label: 'Must be at least 16 characters',
+      pattern: /.{16,}/,
+      example: 'aaaaaaaaaaaaaaaa',
+    }
+  ],
 
-  {
-    label: 'Must be at least 8 characters',
-    pattern: /.{8,}/,
-    example: 'aaaaaaaa',
-  },
-  {
-    label: 'Must be at least 12 characters',
-    pattern: /.{12,}/,
-    example: 'aaaaaaaaaaaa',
-  },
-  {
-    label: 'Must be at least 16 characters',
-    pattern: /.{16,}/,
-    example: 'aaaaaaaaaaaaaaaa',
-  },
+  character_types: [
+    {
+      label: 'Must contain a lowercase letter',
+      pattern: /[a-z]/,
+      example: 'a',
+    },
+    {
+      label: 'Must contain an uppercase letter',
+      pattern: /[A-Z]/,
+      example: 'A',
+    },
+    {
+      label: 'Must contain a digit',
+      pattern: /[0-9]/,
+      example: '1',
+    }
+  ],
 
-  # ─────────────────────────────
-  # CHARACTER TYPE RULES
-  # ─────────────────────────────
+  structure: [
+    {
+      label: 'Must NOT contain spaces',
+      pattern: /^[^ ]+$/,
+      example: '(no spaces)',
+    },
+    {
+      label: 'Must start with a number',
+      pattern: /^[0-9]/,
+      example: '1...',
+    },
+    {
+      label: 'Must end with a digit',
+      pattern: /[0-9]$/,
+      example: '...1',
+    },
+    {
+      label: 'Must start and end with the same character',
+      pattern: /^(.).*\1$/,
+      example: 'a...a',
+    }
+  ],
 
-  {
-    label: 'Must contain a lowercase letter',
-    pattern: /[a-z]/,
-    example: 'a',
-  },
-  {
-    label: 'Must contain an uppercase letter',
-    pattern: /[A-Z]/,
-    example: 'A',
-  },
-  {
-    label: 'Must contain a digit',
-    pattern: /[0-9]/,
-    example: '1',
-  },
+  repetition: [
+    {
+      label: 'Must contain two digits in a row',
+      pattern: /[0-9]{2}/,
+      example: '42',
+    },
+    {
+      label: 'Must contain three identical characters in a row',
+      pattern: /(.)\1\1/,
+      example: 'aaa',
+    }
+  ],
 
-  # ─────────────────────────────
-  # STRUCTURE / POSITION RULES
-  # ─────────────────────────────
+  substrings: [
+    { label: 'Must contain "nailgun"', pattern: /nailgun/, example: '...nailgun...' },
+    { label: 'Must contain "2026"', pattern: /2026/, example: '2026' },
+    { label: 'Must contain "cat"', pattern: /cat/, example: 'cat' }
+  ],
 
-  {
-    label: 'Must NOT contain spaces',
-    pattern: /^[^ ]+$/,
-    example: '(no spaces)',
-  },
-  {
-    label: 'Must start with a number',
-    pattern: /^[0-9]/,
-    example: 'a...',
-  },
-  {
-    label: 'Must end with a digit',
-    pattern: /[0-9]$/,
-    example: '...1',
-  },
-  {
-    label: 'Must start and end with the same character',
-    pattern: /^(.).*\1$/,
-    example: 'a...a',
-  },
+  negative: [
+    {
+      label: 'Must NOT contain "f"',
+      pattern: /^[^f]*$/,
+      example: '(no f)',
+    },
+    {
+      label: 'Must NOT contain "1"',
+      pattern: /^[^1]*$/,
+      example: '(no 1)',
+    }
+  ],
 
-  # ─────────────────────────────
-  # REPETITION / PATTERN RULES
-  # ─────────────────────────────
-
-  {
-    label: 'Must contain two digits in a row (e.g. 42)',
-    pattern: /[0-9]{2}/,
-    example: '42',
-  },
-  {
-    label: 'Must contain three identical characters in a row',
-    pattern: /(.)\1\1/,
-    example: 'aaa',
-  },
-
-  # ─────────────────────────────
-  # POSITIONAL SUBSTRING RULES
-  # ─────────────────────────────
-
-  {
-    label: 'Must contain "nailgun" somewhere',
-    pattern: /nailgun/,
-    example: '...nailgun...',
-  },
-  {
-    label: 'Must contain "2026"',
-    pattern: /2026/,
-    example: '2026',
-  },
-  {
-    label: 'Must contain "cat"',
-    pattern: /cat/,
-    example: 'cat',
-  },
-
-  # ─────────────────────────────
-  # NEGATIVE RULES (more interesting gameplay)
-  # ─────────────────────────────
-
-  {
-    label: 'Must NOT contain "f"',
-    pattern: /^[^f]*$/,
-    example: '(no a)',
-  },
-  {
-    label: 'Must NOT contain "1"',
-    pattern: /^[^1]*$/,
-    example: '(no numbers)',
-  },
-
-  # ─────────────────────────────
-  # ADVANCED / PUZZLE RULES
-  # ─────────────────────────────
-
-  {
-    label: 'Must contain at least 2 vowels',
-    pattern: /.*[aeiou].*[aeiou].*/,
-    example: 'ae',
-  },
-  {
-    label: 'Must contain a letter followed by a digit',
-    pattern: /[a-zA-Z][0-9]/,
-    example: 'a1',
-  },
-  {
-    label: 'Must contain a digit followed by a letter',
-    pattern: /[0-9][a-zA-Z]/,
-    example: '1a',
-  }
-].freeze
+  advanced: [
+    {
+      label: 'Must contain at least 2 vowels',
+      pattern: /.*[aeiou].*[aeiou].*/,
+      example: 'ae',
+    },
+    {
+      label: 'Must contain a letter followed by a digit',
+      pattern: /[a-zA-Z][0-9]/,
+      example: 'a1',
+    },
+    {
+      label: 'Must contain a digit followed by a letter',
+      pattern: /[0-9][a-zA-Z]/,
+      example: '1a',
+    }
+  ]
+}.freeze
  
   # ── Control mappings — Regex Mapping ─────────────────────────────────────────
   # Only control keys live here. Single printable chars are caught by
@@ -231,10 +208,16 @@ RULE_POOL = [
     cfg         = DIFFICULTY[@difficulty_level]
     @game_timer = cfg[:game_duration]
  
-    num_rules = (@difficulty_level + 1).clamp(2, RULE_POOL.length)
+    num_rules = (@difficulty_level + 1).clamp(2, RULE_POOLS.length)
+
+    selected_rules = RULE_POOLS.values
+      .shuffle                          # randomize pool order
+      .first(num_rules)                 # pick N pools
+      .map { |pool| pool.sample }       # pick 1 rule from each pool
  
     # ── Dynamic list of active rules ──────────────────────────────────────────
-    @active_rules = RULE_POOL.shuffle.first(num_rules).map { |r| r.dup.merge(passing: false) }
+    @active_rules = selected_rules.map do |rule| rule.dup.merge(passing: false)
+end
  
     @input_str  = ''
     @all_pass   = false
