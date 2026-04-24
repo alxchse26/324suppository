@@ -43,7 +43,7 @@ class RockClimb < BaseMinigame
   COLOR_ROCK       = [0.55, 0.41, 0.08, 1.0]
   COLOR_FROZEN     = [0.40, 0.55, 0.65, 1.0]   # rock turns blue-grey when frozen
   COLOR_PLATFORM   = [0.35, 0.25, 0.10, 1.0]   # starting platform
-  COLOR_GEM        = [0.0,  1.0,  0.91, 1.0]
+  COLOR_GEM        = [1.0,  0.82, 0.0, 1.0]
   COLOR_WHITE      = [1.0,  1.0,  1.0,  1.0]
   COLOR_WALL_LINE  = [1.0,  1.0,  1.0,  0.04]
 
@@ -76,7 +76,6 @@ class RockClimb < BaseMinigame
     super
     
     @all_rock_shapes = []
-    @waiting = true  # true until player presses space/enter to start
     cfg = DIFFICULTY[@difficulty_level]
     @rock_speed     = cfg[:rock_speed]
     @spawn_interval = cfg[:spawn_interval]
@@ -114,7 +113,6 @@ class RockClimb < BaseMinigame
     draw_starting_platform
     draw_player
     draw_hud
-    draw_instructions 
   end
 
   # ---------------------------------------------------------------------------
@@ -133,7 +131,6 @@ class RockClimb < BaseMinigame
   # ---------------------------------------------------------------------------
     def update(dt)
     return unless active?
-    return if @waiting  # freeze everything until player starts
     @grace_timer -= dt if @grace_timer > 0
 
     if ($keys_held['up'] || $keys_held['w'] || $keys_held['space'] || $keys_held[' ']) && @on_ground
@@ -167,14 +164,7 @@ class RockClimb < BaseMinigame
   # ---------------------------------------------------------------------------
   def handle_input(event)
     return unless event.respond_to?(:key) && event.type.to_s.include?('down')
-     # If waiting, any press of space/enter starts the game
-    if @waiting
-      if event.key == 'space' || event.key == 'return' || event.key == 'enter'
-        @waiting = false
-        clear_instructions
-      end
-      return
-    end
+    
     
     
     action = resolve_key(event.key)
@@ -192,52 +182,11 @@ class RockClimb < BaseMinigame
   end
 
   def cleanup
-    clear_instructions
     @all_rock_shapes.each(&:remove)
     @all_rock_shapes.clear
     @rocks.clear
     super
   end
-#-------------------------------------------------------------------
-  def draw_instructions # Instructions
-  @instruction_objects = []
-
-  # Dark overlay
-  @instruction_objects << Rectangle.new(
-    x: 0, y: 0, width: 800, height: 600,
-    color: [0.0, 0.0, 0.0, 0.75], z: 50
-  )
-  # Title
-  @instruction_objects << Text.new(
-    'ROCK CLIMB',
-    x: 300, y: 160, size: 32, color: 'white', z: 51
-  )
-  # Instructions
-  [
-    'Jump on falling rocks to climb up!',
-    'Land ON TOP of rocks to freeze them',
-    'Reach the gem at the top to win',
-    'Avoid getting hit from above',
-    "Don't fall off the bottom!",
-  ].each_with_index do |line, i|
-    @instruction_objects << Text.new(
-      line, x: 200, y: 240 + i * 36,
-      size: 16, color: [0.8, 0.8, 0.8, 1], z: 51
-    )
-  end
-  # Press to start
-  @instruction_objects << Text.new(
-    'Press SPACE or ENTER to start!',
-    x: 240, y: 460, size: 20, color: 'lime', z: 51
-  )
-end
-
-def clear_instructions # Clear Instructions
-  @instruction_objects&.each(&:remove)
-  @instruction_objects = []
-end
-
-
 
   # ── Private helpers ──────────────────────────────────────────────────────────
   private
@@ -264,12 +213,52 @@ end
     end
   end
 
-  def draw_gem
-    @gem = track Rectangle.new(x: GEM_X, y: GEM_Y, width: GEM_W, height: GEM_H,
-                                color: COLOR_GEM, z: 5)
-    track Text.new('★ REACH ME ★', x: GEM_X - 20, y: GEM_Y - 20,
-                   size: 13, color: COLOR_GEM, z: 6)
+ def draw_gem
+  cx = GEM_X + 15  # center x
+  cy = GEM_Y + 15  # center y
+  outer = 20       # outer point radius
+  inner = 8        # inner point radius
+
+  # Calculate the 10 points of a 5-pointed star
+  points = []
+  10.times do |i|
+    angle = Math::PI / 5 * i - Math::PI / 2  # start at top
+    r = i.even? ? outer : inner
+    points << [cx + r * Math.cos(angle), cy + r * Math.sin(angle)]
   end
+
+  # Draw as 5 triangles from center to each outer point
+  5.times do |i|
+    p1 = points[i * 2]
+    p2 = points[i * 2 + 1]
+    p3 = points[(i * 2 + 2) % 10]
+
+    track Triangle.new(
+      x1: cx,   y1: cy,
+      x2: p1[0], y2: p1[1],
+      x3: p2[0], y3: p2[1],
+      color: COLOR_GEM, z: 5
+    )
+    track Triangle.new(
+      x1: cx,   y1: cy,
+      x2: p2[0], y2: p2[1],
+      x3: p3[0], y3: p3[1],
+      color: COLOR_GEM, z: 5
+    )
+  end
+
+  # Store center for collision detection
+  @gem_cx = cx
+  @gem_cy = cy
+
+  track Text.new(
+    'GOLD STAR (REACH ME)',
+    x: cx - 28, y: cy - 38,
+    size: 11,
+    color: COLOR_GEM,
+    z: 6
+  )
+ end
 
   # The solid starting platform the player stands on at game start.
   # Drawn as a wide brown rectangle near the bottom of the screen.
@@ -294,10 +283,10 @@ end
     )
   end
 
-  def draw_hud
+  def draw_hud #
     track Text.new('ROCK CLIMB', x: 20,  y: 14, size: 16, color: 'white', z: 20)
     track Text.new('Jump on rocks to climb up!',
-                   x: 220, y: 14, size: 13, color: [0.7, 0.7, 0.7, 1], z: 20)
+                   x: 145, y: 14, size: 13, color: [0.7, 0.7, 0.7, 1], z: 20)
     track Text.new('Time:', x: 560, y: 14, size: 16, color: 'white', z: 20)
     @timer_text = track Text.new(format_time(@game_timer), x: 610, y: 14, size: 16, color: 'aqua', z: 20)
   end
@@ -418,7 +407,6 @@ end
     return if @grace_timer > 0
     return unless @player.y > DEATH_Y
 
-    @fail_reason = 'Fell off the bottom'
     take_hit
   end
 
@@ -506,12 +494,12 @@ end
 
   # ── Win condition ─────────────────────────────────────────────────────────
 
-  # Player wins by reaching the gem rectangle at the top.
+  # Player wins by reaching the gold star (old rectangle gem) at the top.
   def check_gem_collision
-    return unless @player.x < GEM_X + GEM_W &&
-                  @player.x + PLAYER_W > GEM_X &&
-                  @player.y < GEM_Y + GEM_H &&
-                  @player.y + PLAYER_H > GEM_Y
+    px_center = @player.x + PLAYER_W / 2
+    py_center = @player.y + PLAYER_H / 2
+    dist = Math.sqrt((@gem_cx - px_center)**2 + (@gem_cy - py_center)**2)
+    return unless dist < 25
     @completed = true
   end
 
