@@ -97,7 +97,7 @@ class FinalStatsScreen
       @texts << Text.new(
         '★ PERFECT RUN! ★',
         x: 270, y: 580,
-        size: 16, color: 'gold', z: 10
+        size: 16, color: [1.0, 0.84, 0.0, 1.0], z: 10
       )
     end
   end
