@@ -1,0 +1,8 @@
+Joseph Koslosky, Bridget Thomson, Alex Chase
+CSCI 324
+Updates to Term Final Project - Ruby
+
+4/24/26
+Bridget Joe and Alex edited the several files including transition.rb, passwording.rb, main.rb, rock_climb.rb, and final_stats_screen.rb
+Joe broke up similar rules in passworkding into 2 different pools, Bridget edited the shape and color of the gem into a gold star and Alex assisted in updating the hearts and editing the final stats screen so it displayed how the user lost their lives. 
+Transition was updated to reflect that you won a game but did not specifically state which minigame alongside the hearts with it and the instructions were more understandable to people who have never played the game before. 
